@@ -29,31 +29,28 @@ class ProductCatalogScreen extends StatelessWidget {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),
-        actions: [
+         actions: [
+          // Botón de búsqueda
           IconButton(
             icon: const Icon(Icons.search, size: 28),
-            color: Colors.white,
+            color: AppColors.iconPrimary,
             onPressed: () {
+              // Obtener los productos actuales del estado del BLoC
+              final state = context.read<ProductBloc>().state;
+              final products = state is ProductLoadSuccess ? state.products : [];
+              
               showSearch(
                 context: context,
-                delegate: ProductSearchDelegate(
-                  products:
-                      context.read<ProductBloc>().state is ProductLoadSuccess
-                      ? (context.read<ProductBloc>().state
-                                as ProductLoadSuccess)
-                            .products
-                      : [],
-                ),
+                delegate: ProductSearchDelegate(products: products.cast<Product>()),
               );
             },
           ),
-          const SizedBox(width: 8),
-          // const Padding(
-          //   padding: EdgeInsets.only(right: 12),
-          //   child: CartIconWithBadge(),
-          // ),
+          // Botón de carrito (opcional)
+          IconButton(
+            icon: const Icon(Icons.shopping_cart),
+            onPressed: () => Navigator.pushNamed(context, '/cart'),
+          ),
         ],
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
       body: BlocBuilder<ProductBloc, ProductState>(
         builder: (context, state) {
@@ -82,17 +79,6 @@ class ProductCatalogScreen extends StatelessWidget {
       ),
       itemCount: products.length,
       itemBuilder: (context, index) => ProductCard(product: products[index]),
-    );
-  }
-
-  void _showSearch(BuildContext context) {
-    showSearch(
-      context: context,
-      delegate: ProductSearchDelegate(
-        products: context.read<ProductBloc>().state is ProductLoadSuccess
-            ? (context.read<ProductBloc>().state as ProductLoadSuccess).products
-            : [],
-      ),
     );
   }
 }

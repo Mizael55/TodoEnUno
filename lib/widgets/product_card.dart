@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:store/theme/app_colors.dart';
 import '../models/models.dart';
+import '../presentation/screen/screen.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
@@ -30,36 +31,53 @@ class ProductCard extends StatelessWidget {
             children: [
               // Sección de imagen (60% del espacio)
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(12),
+                ),
                 child: AspectRatio(
                   aspectRatio: 1, // Relación 1:1
-                  child: CachedNetworkImage(
-                    imageUrl: product.imageUrl,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => Container(
-                      color: Colors.grey[100],
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.primary.withOpacity(0.5),
+                  child: Hero(
+                    tag: 'product-image-${product.id}',
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ProductDetailScreen(product: product),
+                          ),
+                        );
+                      },
+                      child: CachedNetworkImage(
+                        imageUrl: product.imageUrl,
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => Container(
+                          color: Colors.grey[100],
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: AppColors.primary.withOpacity(0.5),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      color: Colors.grey[200],
-                      child: const Center(
-                        child: Icon(Icons.image_not_supported_outlined),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey[200],
+                          child: const Center(
+                            child: Icon(Icons.image_not_supported_outlined),
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
               ),
-              
+
               // Sección de detalles (40% del espacio)
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
-                  mainAxisSize: MainAxisSize.min, // Importante para evitar overflow
+                  mainAxisSize:
+                      MainAxisSize.min, // Importante para evitar overflow
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Categoría
@@ -75,7 +93,7 @@ class ProductCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 6),
-                    
+
                     // Nombre del producto
                     Text(
                       product.name,
@@ -89,7 +107,7 @@ class ProductCard extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
-                    
+
                     //  Precio
                     Text(
                       '\$${product.price.toStringAsFixed(2)}',
@@ -99,7 +117,7 @@ class ProductCard extends StatelessWidget {
                         color: AppColors.secondary,
                       ),
                     ),
-                    
+
                     // Fecha (opcional)
                     const SizedBox(height: 4),
                     Text(

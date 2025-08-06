@@ -1,4 +1,5 @@
 // lib/bloc/product/product_bloc.dart
+import 'dart:async';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -12,6 +13,7 @@ part 'product_state.dart';
 class ProductBloc extends Bloc<ProductEvent, ProductState> {
   final ProductRepository _productRepository;
   final FirebaseStorageService _storageService;
+   StreamSubscription? _productsSubscription;
 
   ProductBloc({
     required ProductRepository productRepository,
@@ -20,6 +22,36 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         _storageService = storageService,
         super(ProductInitial()) {
     on<CreateProductWithImage>(_onCreateProductWithImage);
+    on<LoadProducts>(_onLoadProducts);
+    on<ListenProducts>(_onListenProducts);
+  }
+
+   void _onListenProducts(
+    ListenProducts event,
+    Emitter<ProductState> emit,
+  ) {
+    _productsSubscription?.cancel();
+    _productsSubscription = _productRepository.streamProducts().listen(
+      (products) {
+        emit(ProductLoadSuccess(products));
+      },
+      onError: (error) {
+        emit(ProductFailure(error.toString()));
+      },
+    );
+  }
+
+   Future<void> _onLoadProducts(
+    LoadProducts event,
+    Emitter<ProductState> emit,
+  ) async {
+    emit(ProductLoading());
+    try {
+      final products = await _productRepository.getProducts();
+      emit(ProductLoadSuccess(products));
+    } catch (e) {
+      emit(ProductFailure(e.toString()));
+    }
   }
 
   Future<void> _onCreateProductWithImage(
@@ -48,4 +80,6 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductFailure(e.toString()));
     }
   }
+
+
 }

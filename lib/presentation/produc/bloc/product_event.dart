@@ -25,3 +25,11 @@ class CreateProductWithImage extends ProductEvent {
   @override
   List<Object> get props => [name, price, description, category, imageFile];
 }
+
+class LoadProducts extends ProductEvent {
+  const LoadProducts();
+}
+
+class ListenProducts extends ProductEvent {
+  const ListenProducts();
+}

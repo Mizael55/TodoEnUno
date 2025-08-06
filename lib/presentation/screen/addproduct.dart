@@ -262,32 +262,40 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   Future<void> _saveProduct() async {
-    if (_formKey.currentState?.validate() ?? false) {
-      if (_selectedImage == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Por favor seleccione una imagen'),
-            backgroundColor: AppColors.error,
-          ),
-        );
-        return;
-      }
-
-      // Disparamos el evento para crear el producto con la imagen
-      context.read<ProductBloc>().add(
-        CreateProductWithImage(
-          name: _nameController.text,
-          price: double.parse(_priceController.text),
-          description: _descriptionController.text,
-          category: _selectedCategory,
-          imageFile: _selectedImage!,
+  if (_formKey.currentState?.validate() ?? false) {
+    if (_selectedImage == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor seleccione una imagen'),
+          backgroundColor: AppColors.error,
         ),
       );
-
-      // Opcional: regresar a la pantalla anterior después de guardar
-      Navigator.pop(context);
+      return;
     }
+
+    // Show loading indicator
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Guardando producto...'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+
+    // Dispatch the event
+    context.read<ProductBloc>().add(
+      CreateProductWithImage(
+        name: _nameController.text,
+        price: double.parse(_priceController.text),
+        description: _descriptionController.text,
+        category: _selectedCategory,
+        imageFile: _selectedImage!,
+      ),
+    );
+
+    // Don't pop immediately, let the bloc handle the state change 
+
   }
+}
 
   @override
   void dispose() {

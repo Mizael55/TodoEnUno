@@ -31,10 +31,14 @@ class ProductDetailScreen extends StatelessWidget {
                 ),
               ),
             ),
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black, size: 35),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.favorite_border),
-                color: AppColors.iconPrimary,
+                icon: const Icon(Icons.favorite_border, size: 35),
+                color: AppColors.textPrimary,
                 onPressed: () {},
               ),
             ],
@@ -45,7 +49,6 @@ class ProductDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Encabezado con precio
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -67,7 +70,7 @@ class ProductDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                  
+
                   // Categoría y rating
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -75,7 +78,9 @@ class ProductDetailScreen extends StatelessWidget {
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.secondary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
@@ -91,11 +96,14 @@ class ProductDetailScreen extends StatelessWidget {
                         const Spacer(),
                         const Icon(Icons.star, color: Colors.amber, size: 20),
                         const SizedBox(width: 4),
-                        const Text('4.8', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Text(
+                          '4.8',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ],
                     ),
                   ),
-                  
+
                   // Descripción
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -108,7 +116,7 @@ class ProductDetailScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-                  
+
                   // Especificaciones
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 8),
@@ -123,7 +131,7 @@ class ProductDetailScreen extends StatelessWidget {
                   _buildSpecItem('Material', 'Algodón 100%'),
                   _buildSpecItem('Dimensiones', '40 x 30 x 15 cm'),
                   _buildSpecItem('Peso', '0.5 kg'),
-                  
+
                   const SizedBox(height: 40),
                 ],
               ),
@@ -131,7 +139,7 @@ class ProductDetailScreen extends StatelessWidget {
           ),
         ],
       ),
-      
+
       // Botón flotante de compra
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Container(
@@ -194,12 +202,7 @@ class ProductDetailScreen extends StatelessWidget {
               color: AppColors.textSecondary,
             ),
           ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-            ),
-          ),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
         ],
       ),
     );

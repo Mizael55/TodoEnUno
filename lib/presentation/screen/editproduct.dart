@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:store/models/models.dart';
 import 'package:store/theme/app_colors.dart';
 
+import '../../utils/utils.dart';
+
 class EditProductScreen extends StatefulWidget {
   final Product product;
 
@@ -48,10 +50,32 @@ class _EditProductScreenState extends State<EditProductScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar Producto'),
-        centerTitle: true,
+        title: const Text(
+          'Editar Producto',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: AppColors.secondary,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, size: 28),
+          color: AppColors.iconPrimary,
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+
+        // ignore: deprecated_member_use
+        shadowColor: AppColors.secondary.withOpacity(0.5),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
+        ),
         actions: [
-          IconButton(icon: const Icon(Icons.save), onPressed: _saveChanges),
+          // Botón de notificaciones (opcional)
+          IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
+          // Botón de carrito (opcional)
+          IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {}),
         ],
       ),
       body: SingleChildScrollView(
@@ -70,125 +94,76 @@ class _EditProductScreenState extends State<EditProductScreen> {
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.grey.shade300),
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: _imageUrlController.text.isNotEmpty
-                        ? Image.network(
-                            _imageUrlController.text,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (context, child, loadingProgress) {
-                              if (loadingProgress == null) return child;
-                              return Center(
-                                child: CircularProgressIndicator(
-                                  value:
-                                      loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                      : null,
-                                ),
-                              );
-                            },
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(Icons.broken_image),
-                          )
-                        : const Icon(Icons.image, size: 50),
+                  child: Hero(
+                    tag: 'product-image-${widget.product.id}',
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: _imageUrlController.text.isNotEmpty
+                          ? Image.network(
+                              _imageUrlController.text,
+                              fit: BoxFit.cover,
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: CircularProgressIndicator(
+                                    value:
+                                        loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                              loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.broken_image),
+                            )
+                          : const Icon(Icons.image, size: 50),
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
 
               // Campo URL de la imagen
-              TextFormField(
+              CustomTextInput(
                 controller: _imageUrlController,
-                decoration: InputDecoration(
-                  labelText: 'URL de la imagen',
-                  prefixIcon: const Icon(Icons.link),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                keyboardType: TextInputType.url,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa una URL';
-                  }
-                  return null;
-                },
+                label: 'URL de la imagen',
+                prefixIcon: Icons.link,
+                inputType: CustomInputType.text,
                 onChanged: (value) => setState(() {}),
               ),
               const SizedBox(height: 20),
 
               // Campo Nombre
-              TextFormField(
+              CustomTextInput(
                 controller: _nameController,
-                decoration: InputDecoration(
-                  labelText: 'Nombre del producto',
-                  prefixIcon: const Icon(Icons.shopping_bag),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa un nombre';
-                  }
-                  return null;
-                },
+                label: 'Nombre del producto',
+                prefixIcon: Icons.shopping_bag,
               ),
               const SizedBox(height: 20),
 
               // Campo Precio
-              TextFormField(
+              CustomTextInput(
                 controller: _priceController,
-                decoration: InputDecoration(
-                  labelText: 'Precio',
-                  prefixIcon: const Icon(Icons.attach_money),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa un precio';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Ingresa un número válido';
-                  }
-                  return null;
-                },
+                label: 'Precio',
+                prefixIcon: Icons.attach_money,
+                inputType: CustomInputType.number,
               ),
               const SizedBox(height: 20),
 
               // Campo Categoría
-              TextFormField(
+              CustomTextInput(
                 controller: _categoryController,
-                decoration: InputDecoration(
-                  labelText: 'Categoría',
-                  prefixIcon: const Icon(Icons.category),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa una categoría';
-                  }
-                  return null;
-                },
+                label: 'Categoría',
+                prefixIcon: Icons.category,
               ),
               const SizedBox(height: 20),
 
               // Campo Descripción
-              TextFormField(
+              CustomTextInput(
                 controller: _descriptionController,
-                decoration: InputDecoration(
-                  labelText: 'Descripción (opcional)',
-                  prefixIcon: const Icon(Icons.description),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
+                label: 'Descripción (opcional)',
+                prefixIcon: Icons.description,
                 maxLines: 3,
               ),
               const SizedBox(height: 30),

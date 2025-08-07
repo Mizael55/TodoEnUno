@@ -24,32 +24,33 @@ class ProductCatalogScreen extends StatelessWidget {
           ),
         ),
         backgroundColor: AppColors.secondary,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          icon: const Icon(Icons.search, size: 28),
+          color: AppColors.iconPrimary,
+          onPressed: () {
+            // Obtener los productos actuales del estado del BLoC
+            final state = context.read<ProductBloc>().state;
+            final products = state is ProductLoadSuccess ? state.products : [];
+
+            showSearch(
+              context: context,
+              delegate: ProductSearchDelegate(
+                products: products.cast<Product>(),
+              ),
+            );
+          },
+        ),
         // ignore: deprecated_member_use
         shadowColor: AppColors.secondary.withOpacity(0.5),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
         ),
-         actions: [
-          // Botón de búsqueda
-          IconButton(
-            icon: const Icon(Icons.search, size: 28),
-            color: AppColors.iconPrimary,
-            onPressed: () {
-              // Obtener los productos actuales del estado del BLoC
-              final state = context.read<ProductBloc>().state;
-              final products = state is ProductLoadSuccess ? state.products : [];
-              
-              showSearch(
-                context: context,
-                delegate: ProductSearchDelegate(products: products.cast<Product>()),
-              );
-            },
-          ),
+        actions: [
+          // Botón de notificaciones (opcional)
+          IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
           // Botón de carrito (opcional)
-          IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () => Navigator.pushNamed(context, '/cart'),
-          ),
+          IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {}),
         ],
       ),
       body: BlocBuilder<ProductBloc, ProductState>(

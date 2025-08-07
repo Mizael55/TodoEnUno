@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:store/constants/categories.dart';
+import 'package:store/theme/app_colors.dart';
 
 class CustomCategoryDropdown extends StatelessWidget {
   final String? value;
@@ -17,21 +18,13 @@ class CustomCategoryDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-
     return InputDecorator(
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: showIcon
-            ? Icon(
-                Icons.category_rounded,
-                color: colors.primary,
-              )
+            ? Icon(Icons.category_rounded, color: AppColors.textPrimary)
             : null,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 12,
@@ -43,21 +36,17 @@ class CustomCategoryDropdown extends StatelessWidget {
           isExpanded: true,
           icon: Icon(
             Icons.arrow_drop_down_rounded,
-            color: colors.onSurface.withOpacity(0.6),
+            color: AppColors.textPrimary,
           ),
-          style: theme.textTheme.bodyLarge,
-          dropdownColor: colors.surface,
+          style: TextStyle(color: AppColors.textPrimary, fontSize: 16),
+          dropdownColor: AppColors.background,
           borderRadius: BorderRadius.circular(12),
           items: productCategories.map((category) {
             return DropdownMenuItem<String>(
               value: category.value,
               child: Row(
                 children: [
-                  Icon(
-                    category.icon,
-                    size: 20,
-                    color: colors.primary,
-                  ),
+                  Icon(category.icon, size: 20, color: AppColors.textPrimary),
                   const SizedBox(width: 12),
                   Text(category.label),
                 ],

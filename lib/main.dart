@@ -8,7 +8,6 @@ import 'package:store/presentation/produc/bloc/product_bloc.dart';
 import 'package:store/presentation/produc/bloc/repositories/product_repository.dart';
 import 'package:store/presentation/produc/bloc/services/firebase_storage_service.dart';
 import 'package:store/theme/app_theme.dart';
-
 import 'presentation/screen/screen.dart';
 
 void main() async {

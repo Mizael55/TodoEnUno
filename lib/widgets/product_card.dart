@@ -89,14 +89,12 @@ class ProductCard extends StatelessWidget {
                         // Icono de editar
                         GestureDetector(
                           onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => EditProductScreen(product: product),
-                            //   ),
-                            // );
-                            // O usar el callback si prefieres
-                            // onEdit?.call();
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProductScreen(product: product),
+                              ),
+                            );
                           },
                           child: Container(
                             padding: const EdgeInsets.all(6),

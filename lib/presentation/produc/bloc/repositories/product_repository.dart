@@ -53,12 +53,37 @@ class ProductRepository {
         );
   }
 
-  // Elimina el producto por Id y todo lo que este relacionado con el
+  /// Elimina un producto por su ID
   Future<void> deleteProduct(String productId) async {
     try {
       await _firestore.collection('products').doc(productId).delete();
     } catch (e) {
       throw Exception('Error al eliminar producto: ${e.toString()}');
+    }
+  }
+
+  Future<Product?> getProductById(String productId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('products')
+          .doc(productId)
+          .get();
+      return doc.exists ? Product.fromMap(doc.id, doc.data() as Map<String, dynamic>) : null;
+    } on FirebaseException catch (e) {
+      throw Exception('Error al obtener producto: ${e.message}');
+    }
+  }
+
+  // Actualiza un producto existente
+  Future<void> updateProduct(Product product) async {
+    try {
+      final productData = product.toMap();
+      await _firestore
+          .collection('products')
+          .doc(product.id)
+          .update(productData);
+    } catch (e) {
+      throw Exception('Error al actualizar producto: ${e.toString()}');
     }
   }
 }

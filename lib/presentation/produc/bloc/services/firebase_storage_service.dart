@@ -9,16 +9,26 @@ class FirebaseStorageService {
     try {
       // Genera un nombre único para la imagen
       final fileName = 'products/${DateTime.now().millisecondsSinceEpoch}.jpg';
-      
+
       // Sube el archivo
       final uploadTask = await _storage.ref(fileName).putFile(imageFile);
-      
+
       // Obtiene la URL de descarga
       final imageUrl = await uploadTask.ref.getDownloadURL();
-      
+
       return imageUrl;
     } catch (e) {
       throw Exception('Error al subir imagen: ${e.toString()}');
+    }
+  }
+
+  Future<void> deleteImageFromUrl(String imageUrl) async {
+    try {
+      // Extraer la referencia del archivo de la URL
+      final ref = FirebaseStorage.instance.refFromURL(imageUrl);
+      await ref.delete();
+    } on FirebaseException catch (e) {
+      throw Exception('Error al eliminar imagen: ${e.message}');
     }
   }
 }

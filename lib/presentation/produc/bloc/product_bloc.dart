@@ -85,16 +85,36 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   }
 
   Future<void> _onDeleteProduct(
-    DeleteProduct event,
-    Emitter<ProductState> emit,
-  ) async {
-    emit(ProductLoading());
-    try {
+  DeleteProduct event,
+  Emitter<ProductState> emit,
+) async {
+  emit(ProductLoading());
+  try {
+    // 1. Obtener el producto primero para tener la URL de la imagen
+    final product = await _productRepository.getProductById(event.productId);
+    
+    if (product != null) {
+      // 2. Eliminar la imagen de Firebase Storage si existe
+      if (product.imageUrl.isNotEmpty) {
+        try {
+          await _storageService.deleteImageFromUrl(product.imageUrl);
+        } catch (e) {
+          print('Error al eliminar imagen: ${e.toString()}');
+        }
+      }
+      
+      // 3. Eliminar el producto de Firestore
       await _productRepository.deleteProduct(event.productId);
+      
       emit(ProductSuccess());
+      
+      // 4. Recargar productos
       add(LoadProducts());
-    } catch (e) {
-      emit(ProductFailure(e.toString()));
+    } else {
+      emit(ProductFailure('Producto no encontrado'));
     }
+  } catch (e) {
+    emit(ProductFailure(e.toString()));
   }
+}
 }

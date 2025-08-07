@@ -40,7 +40,7 @@ class Product {
       'price': price,
       'description': description,
       'category': category,
-      'imageUrl': imageUrl,  // Actualizado para usar imageUrl
+      'imageUrl': imageUrl, 
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -52,7 +52,7 @@ class Product {
       price: (map['price'] as num).toDouble(),
       description: map['description'] ?? '',
       category: map['category'] ?? '',
-      imageUrl: map['imageUrl'] ?? '',  // Actualizado para usar imageUrl
+      imageUrl: map['imageUrl'] ?? '',
       createdAt: DateTime.parse(map['createdAt']),
     );
   }

@@ -72,6 +72,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
         children: [
           // TabBar
           Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(16),

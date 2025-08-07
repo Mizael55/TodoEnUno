@@ -97,7 +97,6 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
                   (category) => Tab(
                     text: category.label,
                     icon: Icon(category.icon, size: 20),
-
                   ),
                 ),
               ],

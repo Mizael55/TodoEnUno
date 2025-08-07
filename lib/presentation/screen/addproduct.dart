@@ -292,6 +292,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
       );
 
       // Don't pop immediately, let the bloc handle the state change
+      Navigator.pop(context);
     }
   }
 

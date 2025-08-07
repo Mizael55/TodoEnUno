@@ -9,8 +9,7 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthRepository
-  authRepository; // Repositorio para operaciones de autenticación
+  final AuthRepository authRepository; // Repositorio para operaciones de autenticación
 
   // Constructor que inicializa el BLoC con el repositorio y define los manejadores de eventos
   AuthBloc({required this.authRepository}) : super(AuthInitial()) {
@@ -32,7 +31,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading()); // Indica que la operación está en progreso
     try {
-      // Intenta registrar al usuario a través del repositorio
+      // registrar al usuario a través del repositorio
       final user = await authRepository.signUpWithEmailAndPassword(
         email: event.email,
         password: event.password,
@@ -92,7 +91,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading()); // Indica carga
     try {
-      // Intenta autenticación
+      // autenticación
       final user = await authRepository.loginWithEmailAndPassword(
         email: event.email,
         password: event.password,

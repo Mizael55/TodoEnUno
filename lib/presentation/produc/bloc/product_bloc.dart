@@ -3,7 +3,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:store/presentation/produc/bloc/services/firebase_storage_service.dart';
 import '../../../models/models.dart';
 import 'repositories/product_repository.dart';
@@ -25,6 +24,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<CreateProductWithImage>(_onCreateProductWithImage);
     on<LoadProducts>(_onLoadProducts);
     on<ListenProducts>(_onListenProducts);
+    on<DeleteProduct>(_onDeleteProduct);
   }
 
   void _onListenProducts(ListenProducts event, Emitter<ProductState> emit) {
@@ -78,6 +78,20 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
       emit(ProductSuccess());
 
       // 4. Recargar productos
+      add(LoadProducts());
+    } catch (e) {
+      emit(ProductFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onDeleteProduct(
+    DeleteProduct event,
+    Emitter<ProductState> emit,
+  ) async {
+    emit(ProductLoading());
+    try {
+      await _productRepository.deleteProduct(event.productId);
+      emit(ProductSuccess());
       add(LoadProducts());
     } catch (e) {
       emit(ProductFailure(e.toString()));

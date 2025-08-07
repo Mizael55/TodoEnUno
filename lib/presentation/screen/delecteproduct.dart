@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:store/models/models.dart';
+import 'package:store/presentation/produc/bloc/product_bloc.dart';
 import 'package:store/theme/app_colors.dart';
 
 import '../../utils/utils.dart';
@@ -140,7 +142,18 @@ class DeleteProductScreen extends StatelessWidget {
                         buttonText: 'ELIMINAR',
                         onClose: () {
                           print('Producto eliminado: ${product.name}');
-                          Navigator.of(context).pop(true);
+                          context.read<ProductBloc>().add(
+                            DeleteProduct(product.id!),
+                          );
+
+                          Navigator.of(context).pop();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Producto eliminado exitosamente'),
+                            ),
+                          );
+                           Navigator.of(context).pop();
+
                         },
                         type: AlertType.error,
                       ),

@@ -28,11 +28,10 @@ class ProductRepository {
 
   Future<List<Product>> getProducts() async {
     try {
-      final snapshot =
-          await _firestore
-              .collection('products')
-              .orderBy('createdAt', descending: true)
-              .get();
+      final snapshot = await _firestore
+          .collection('products')
+          .orderBy('createdAt', descending: true)
+          .get();
 
       return snapshot.docs
           .map((doc) => Product.fromMap(doc.id, doc.data()))
@@ -48,10 +47,18 @@ class ProductRepository {
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map(
-          (snapshot) =>
-              snapshot.docs
-                  .map((doc) => Product.fromMap(doc.id, doc.data()))
-                  .toList(),
+          (snapshot) => snapshot.docs
+              .map((doc) => Product.fromMap(doc.id, doc.data()))
+              .toList(),
         );
+  }
+
+  // Elimina el producto por Id y todo lo que este relacionado con el
+  Future<void> deleteProduct(String productId) async {
+    try {
+      await _firestore.collection('products').doc(productId).delete();
+    } catch (e) {
+      throw Exception('Error al eliminar producto: ${e.toString()}');
+    }
   }
 }

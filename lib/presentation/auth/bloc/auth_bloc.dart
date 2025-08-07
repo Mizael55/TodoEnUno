@@ -9,7 +9,8 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthRepository authRepository; // Repositorio para operaciones de autenticación
+  final AuthRepository
+  authRepository; // Repositorio para operaciones de autenticación
 
   // Constructor que inicializa el BLoC con el repositorio y define los manejadores de eventos
   AuthBloc({required this.authRepository}) : super(AuthInitial()) {
@@ -22,6 +23,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _onLoginWithEmailAndPasswordRequested,
     );
     on<LoginWithGoogleRequested>(_onLoginWithGoogleRequested);
+    on<CheckAuthStatusRequested>(_onCheckAuthStatusRequested);
+    on<SignOutRequested>(_onSignOutRequested);
+
+    // Verificar el estado de autenticación al iniciar el BLoC
+    add(CheckAuthStatusRequested());
+  }
+
+  Future<void> _onCheckAuthStatusRequested(
+    CheckAuthStatusRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      final user = await authRepository.getCurrentUser();
+      if (user != null) {
+        emit(AuthLoginSuccess(user));
+      } else {
+        emit(AuthInitial());
+      }
+    } catch (e) {
+      emit(AuthFailure('Error al verificar sesión: ${e.toString()}'));
+    }
+  }
+
+  Future<void> _onSignOutRequested(
+    SignOutRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(AuthLoading());
+    try {
+      await authRepository.signOut();
+      emit(AuthInitial());
+    } catch (e) {
+      emit(AuthFailure('Error al cerrar sesión: ${e.toString()}'));
+    }
   }
 
   // Manejador para registro con email y contraseña

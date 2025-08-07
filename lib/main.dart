@@ -9,10 +9,12 @@ import 'package:store/presentation/produc/bloc/repositories/product_repository.d
 import 'package:store/presentation/produc/bloc/services/firebase_storage_service.dart';
 import 'package:store/theme/app_theme.dart';
 import 'presentation/screen/screen.dart';
+import 'widgets/widgets.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(const MyApp());
 }
 
@@ -30,14 +32,23 @@ class MyApp extends StatelessWidget {
       child: MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => AuthBloc(
-              authRepository: RepositoryProvider.of<AuthRepository>(context),
-            ),
+            create: (context) =>
+                AuthBloc(
+                  authRepository: RepositoryProvider.of<AuthRepository>(
+                    context,
+                  ),
+                )..add(
+                  CheckAuthStatusRequested(),
+                ), // Verifica el estado de autenticación al iniciar
           ),
           BlocProvider(
             create: (context) => ProductBloc(
-              productRepository: RepositoryProvider.of<ProductRepository>(context),
-              storageService: RepositoryProvider.of<FirebaseStorageService>(context),
+              productRepository: RepositoryProvider.of<ProductRepository>(
+                context,
+              ),
+              storageService: RepositoryProvider.of<FirebaseStorageService>(
+                context,
+              ),
             ),
           ),
         ],
@@ -46,8 +57,10 @@ class MyApp extends StatelessWidget {
           title: 'APP Tiendas',
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
+          home:
+              const AuthWrapper(), // Widget que manejará la lógica de autenticación
           onGenerateRoute: (settings) {
-            // Manejo de rutas con argumentos si es necesario
+            // Puedes mantener esto para otras rutas
             return MaterialPageRoute(
               builder: (context) => const WelcomeScreen(),
             );

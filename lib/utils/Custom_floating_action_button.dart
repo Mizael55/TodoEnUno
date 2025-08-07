@@ -17,13 +17,13 @@ class CustomFloatingActionButton extends StatelessWidget {
     Key? key,
     required this.context,
     this.onPressedCallback,
-    this.backgroundColor = Colors.deepPurple,
+    required this.backgroundColor,
     this.foregroundColor = Colors.white,
     this.elevation = 8,
     this.borderRadius = const BorderRadius.all(Radius.circular(16)),
     this.borderColor = Colors.white,
     this.borderWidth = 2,
-    this.label = 'Agregar Producto',
+    required this.label,
     this.icon = Icons.add,
   }) : super(key: key);
 

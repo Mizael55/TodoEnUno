@@ -7,7 +7,14 @@ abstract class AuthState extends Equatable {
   List<Object> get props => [];
 }
 
-class AuthInitial extends AuthState {}
+class AuthInitial extends AuthState {
+  final bool isChecking; // Para mostrar carga mientras verifica
+  
+  const AuthInitial({this.isChecking = false});
+  
+  @override
+  List<Object> get props => [isChecking];
+}
 
 class AuthLoading extends AuthState {}
 

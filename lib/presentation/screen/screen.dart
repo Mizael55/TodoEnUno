@@ -1,4 +1,5 @@
 
+export 'package:store/presentation/screen/error.dart';
 export 'package:store/presentation/screen/update_product.dart';
 export 'package:store/presentation/screen/delecte_product.dart';
 export 'package:store/presentation/screen/details_product.dart';

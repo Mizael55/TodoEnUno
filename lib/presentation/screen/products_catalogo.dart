@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:store/constants/categories.dart';
+import 'package:store/presentation/auth/bloc/auth_bloc.dart';
 import 'package:store/presentation/produc/bloc/product_bloc.dart';
 import 'package:store/theme/app_colors.dart';
 import '../../models/models.dart';
@@ -150,7 +151,26 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
           ),
         ],
       ),
-      floatingActionButton: CustomFloatingActionButton(context: context),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          CustomFloatingActionButton(
+            context: context,
+            label: 'Agregar Producto',
+            backgroundColor: AppColors.secondary,
+          ),
+          const SizedBox(height: 16),
+          CustomFloatingActionButton(
+            context: context,
+            label: 'Cerrar sesión',
+            onPressedCallback: () {
+              context.read<AuthBloc>().add(SignOutRequested());
+            },
+            backgroundColor: AppColors.error,
+            icon: Icons.logout,
+          ),
+        ],
+      ),
     );
   }
 

@@ -47,3 +47,7 @@ class LoginWithEmailAndPasswordRequested extends AuthEvent {
 }
 
 class LoginWithGoogleRequested extends AuthEvent {}
+
+class CheckAuthStatusRequested extends AuthEvent {}
+
+class SignOutRequested extends AuthEvent {}

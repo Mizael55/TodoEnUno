@@ -168,6 +168,27 @@ class AuthRepository {
     }
   }
 
+  // Método para verificar si hay un usuario autenticado
+  Future<UserModel?> getCurrentUser() async {
+    try {
+      final firebaseUser = _firebaseAuth.currentUser;
+      if (firebaseUser == null) return null;
+
+      final doc = await _firestore.collection('users').doc(firebaseUser.uid).get();
+      if (!doc.exists) return null;
+
+      return UserModel.fromMap(doc.data()!);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // Método para cerrar sesión
+  Future<void> signOut() async {
+    await _googleSignIn.signOut();
+    await _firebaseAuth.signOut();
+  }
+
   String _mapFirebaseError(String code) {
     switch (code) {
       case 'account-exists-with-different-credential':

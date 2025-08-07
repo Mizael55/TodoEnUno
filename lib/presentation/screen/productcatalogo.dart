@@ -106,15 +106,14 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
           Expanded(
             child: BlocBuilder<ProductBloc, ProductState>(
               builder: (context, state) {
-                if (state is ProductLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is ProductLoadSuccess) {
-                  return TabBarView(
+                // Contenido principal basado en el estado
+                Widget content;
+
+                if (state is ProductLoadSuccess) {
+                  content = TabBarView(
                     controller: _tabController,
                     children: [
-                      // Tab "Todos"
                       _buildProductList(state.products),
-                      // Tabs de categorías
                       ...productCategories.map((category) {
                         final filteredProducts = state.products
                             .where((p) => p.category == category.value)
@@ -124,10 +123,27 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
                     ],
                   );
                 } else if (state is ProductFailure) {
-                  return Center(child: Text('Error: ${state.error}'));
+                  content = Center(child: Text('Error: ${state.error}'));
+                } else {
+                  content = const Center(
+                    child: Text('No hay productos disponibles'),
+                  );
                 }
-                return const Center(
-                  child: Text('No hay productos disponibles'),
+
+                // Mostrar el indicador de carga encima si está cargando
+                return Stack(
+                  children: [
+                    content,
+                    if (state is ProductLoading)
+                      const Center(
+                        child: CircularProgressIndicator.adaptive(
+                          backgroundColor: Colors.indigo,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppColors.secondary,
+                          ),
+                        ),
+                      ),
+                  ],
                 );
               },
             ),

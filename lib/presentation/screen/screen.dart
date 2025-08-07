@@ -1,8 +1,8 @@
 
-export 'package:store/presentation/screen/editproduct.dart';
-export 'package:store/presentation/screen/delecteproduct.dart';
-export 'package:store/presentation/screen/detailsproduct.dart';
-export 'package:store/presentation/screen/addproduct.dart';
+export 'package:store/presentation/screen/update_product.dart';
+export 'package:store/presentation/screen/delecte_product.dart';
+export 'package:store/presentation/screen/details_product.dart';
+export 'package:store/presentation/screen/add_product.dart';
 export 'package:store/presentation/screen/auth.dart';
-export 'package:store/presentation/screen/productcatalogo.dart';
+export 'package:store/presentation/screen/products_catalogo.dart';
 export 'package:store/presentation/screen/splash.dart';

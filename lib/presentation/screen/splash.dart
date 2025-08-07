@@ -33,6 +33,7 @@ class WelcomeScreen extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
+                  // ignore: deprecated_member_use
                   Colors.black.withOpacity(0.5),
                 ],
                 stops: const [0.4, 1.0],

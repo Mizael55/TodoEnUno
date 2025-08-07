@@ -115,6 +115,7 @@ class ProductSearchDelegate extends SearchDelegate<Product?> {
                     vertical: 2,
                   ),
                   decoration: BoxDecoration(
+                    // ignore: deprecated_member_use
                     color: AppColors.secondary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(4),
                   ),

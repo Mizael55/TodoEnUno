@@ -82,6 +82,7 @@ class ProductDetailScreen extends StatelessWidget {
                             vertical: 6,
                           ),
                           decoration: BoxDecoration(
+                            // ignore: deprecated_member_use
                             color: AppColors.secondary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -150,6 +151,7 @@ class ProductDetailScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(15),
           boxShadow: [
             BoxShadow(
+              // ignore: deprecated_member_use
               color: AppColors.secondary.withOpacity(0.3),
               blurRadius: 10,
               spreadRadius: 2,
@@ -175,6 +177,7 @@ class ProductDetailScreen extends StatelessWidget {
             Container(
               width: 1,
               height: 30,
+              // ignore: deprecated_member_use
               color: Colors.white.withOpacity(0.3),
             ),
             SizedBox(

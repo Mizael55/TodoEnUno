@@ -51,31 +51,30 @@ class _AddProductScreenState extends State<AddProductScreen> {
   void _showImageSourceDialog() {
     showDialog(
       context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text('Seleccionar imagen'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.photo_library),
-                  title: const Text('Galería'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImage(ImageSource.gallery);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: const Text('Cámara'),
-                  onTap: () {
-                    Navigator.pop(context);
-                    _pickImage(ImageSource.camera);
-                  },
-                ),
-              ],
+      builder: (context) => AlertDialog(
+        title: const Text('Seleccionar imagen'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Galería'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
             ),
-          ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Cámara'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -121,65 +120,65 @@ class _AddProductScreenState extends State<AddProductScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: AppColors.inputBorder,
                         blurRadius: 8,
                         offset: const Offset(0, 4),
                       ),
                     ],
                     border: Border.all(
+                      // ignore: deprecated_member_use
                       color: AppColors.inputBorder.withOpacity(0.5),
                       width: 1.5,
                     ),
                   ),
-                  child:
-                      _selectedImage == null
-                          ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_photo_alternate_outlined,
-                                size: 48,
+                  child: _selectedImage == null
+                      ? Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_photo_alternate_outlined,
+                              size: 48,
+                              color: AppColors.textSecondary,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              'Agregar imagen',
+                              style: theme.textTheme.bodyLarge?.copyWith(
                                 color: AppColors.textSecondary,
                               ),
-                              const SizedBox(height: 12),
-                              Text(
-                                'Agregar imagen',
-                                style: theme.textTheme.bodyLarge?.copyWith(
-                                  color: AppColors.textSecondary,
-                                ),
+                            ),
+                          ],
+                        )
+                      : Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: Image.file(
+                                _selectedImage!,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
                               ),
-                            ],
-                          )
-                          : Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
-                                child: Image.file(
-                                  _selectedImage!,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
+                            ),
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: IconButton(
+                                icon: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
                                 ),
-                              ),
-                              Positioned(
-                                top: 8,
-                                right: 8,
-                                child: IconButton(
-                                  icon: const Icon(
-                                    Icons.close,
-                                    color: Colors.white,
-                                  ),
-                                  style: IconButton.styleFrom(
-                                    backgroundColor: Colors.black54,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _selectedImage = null;
-                                    });
-                                  },
+                                style: IconButton.styleFrom(
+                                  backgroundColor: Colors.black54,
                                 ),
+                                onPressed: () {
+                                  setState(() {
+                                    _selectedImage = null;
+                                  });
+                                },
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
+                        ),
                 ),
               ),
               const SizedBox(height: 32),
@@ -262,40 +261,39 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   Future<void> _saveProduct() async {
-  if (_formKey.currentState?.validate() ?? false) {
-    if (_selectedImage == null) {
+    if (_formKey.currentState?.validate() ?? false) {
+      if (_selectedImage == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Por favor seleccione una imagen'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+        return;
+      }
+
+      // Show loading indicator
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Por favor seleccione una imagen'),
-          backgroundColor: AppColors.error,
+          content: Text('Guardando producto...'),
+          duration: Duration(seconds: 2),
         ),
       );
-      return;
+
+      // Dispatch the event
+      context.read<ProductBloc>().add(
+        CreateProductWithImage(
+          name: _nameController.text,
+          price: double.parse(_priceController.text),
+          description: _descriptionController.text,
+          category: _selectedCategory,
+          imageFile: _selectedImage!,
+        ),
+      );
+
+      // Don't pop immediately, let the bloc handle the state change
     }
-
-    // Show loading indicator
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Guardando producto...'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-
-    // Dispatch the event
-    context.read<ProductBloc>().add(
-      CreateProductWithImage(
-        name: _nameController.text,
-        price: double.parse(_priceController.text),
-        description: _descriptionController.text,
-        category: _selectedCategory,
-        imageFile: _selectedImage!,
-      ),
-    );
-
-    // Don't pop immediately, let the bloc handle the state change 
-
   }
-}
 
   @override
   void dispose() {

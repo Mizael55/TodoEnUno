@@ -31,7 +31,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     );
     _categoryController = TextEditingController(text: widget.product.category);
     _descriptionController = TextEditingController(
-      text: widget.product.description ?? '',
+      text: widget.product.description,
     );
     _imageUrlController = TextEditingController(text: widget.product.imageUrl);
   }

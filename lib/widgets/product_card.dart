@@ -6,8 +6,15 @@ import '../presentation/screen/screen.dart';
 
 class ProductCard extends StatelessWidget {
   final Product product;
+  final VoidCallback? onDelete;
+  final VoidCallback? onEdit;
 
-  const ProductCard({super.key, required this.product});
+  const ProductCard({
+    super.key, 
+    required this.product,
+    this.onDelete,
+    this.onEdit,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,58 +33,119 @@ class ProductCard extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           return Column(
-            mainAxisSize: MainAxisSize.min, // Evita overflow
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Sección de imagen (60% del espacio)
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
-                child: AspectRatio(
-                  aspectRatio: 1, // Relación 1:1
-                  child: Hero(
-                    tag: 'product-image-${product.id}',
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ProductDetailScreen(product: product),
-                          ),
-                        );
-                      },
-                      child: CachedNetworkImage(
-                        imageUrl: product.imageUrl,
-                        fit: BoxFit.cover,
-                        placeholder: (context, url) => Container(
-                          color: Colors.grey[100],
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.primary.withOpacity(0.5),
+              // Sección de imagen
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(12),
+                    ),
+                    child: AspectRatio(
+                      aspectRatio: 1,
+                      child: Hero(
+                        tag: 'product-image-${product.id}',
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => 
+                                    ProductDetailScreen(product: product),
+                              ),
+                            );
+                          },
+                          child: CachedNetworkImage(
+                            imageUrl: product.imageUrl,
+                            fit: BoxFit.cover,
+                            placeholder: (context, url) => Container(
+                              color: Colors.grey[100],
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.primary.withOpacity(0.5),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: Colors.grey[200],
-                          child: const Center(
-                            child: Icon(Icons.image_not_supported_outlined),
+                            errorWidget: (context, url, error) => Container(
+                              color: Colors.grey[200],
+                              child: const Center(
+                                child: Icon(Icons.image_not_supported_outlined),
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                  // Iconos de acciones en la esquina superior derecha
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Row(
+                      children: [
+                        // Icono de editar
+                        GestureDetector(
+                          onTap: () {
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => EditProductScreen(product: product),
+                            //   ),
+                            // );
+                            // O usar el callback si prefieres
+                            // onEdit?.call();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.edit,
+                              size: 20,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // Icono de eliminar
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DeleteProductScreen(product: product),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.9),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.delete,
+                              size: 20,
+                              color: AppColors.error,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
 
-              // Sección de detalles (40% del espacio)
+              // Sección de detalles
               Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(
-                  mainAxisSize:
-                      MainAxisSize.min, // Importante para evitar overflow
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Categoría
@@ -108,7 +176,7 @@ class ProductCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
 
-                    //  Precio
+                    // Precio
                     Text(
                       '\$${product.price.toStringAsFixed(2)}',
                       style: TextStyle(
@@ -118,7 +186,7 @@ class ProductCard extends StatelessWidget {
                       ),
                     ),
 
-                    // Fecha (opcional)
+                    // Fecha
                     const SizedBox(height: 4),
                     Text(
                       'Agregado: ${_formatDate(product.createdAt)}',

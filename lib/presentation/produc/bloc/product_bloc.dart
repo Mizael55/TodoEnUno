@@ -25,6 +25,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     on<LoadProducts>(_onLoadProducts);
     on<ListenProducts>(_onListenProducts);
     on<DeleteProduct>(_onDeleteProduct);
+    on<UpdateProduct>(_onUpdateProduct);
   }
 
   void _onListenProducts(ListenProducts event, Emitter<ProductState> emit) {
@@ -85,36 +86,86 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
   }
 
   Future<void> _onDeleteProduct(
-  DeleteProduct event,
-  Emitter<ProductState> emit,
-) async {
-  emit(ProductLoading());
-  try {
-    // 1. Obtener el producto primero para tener la URL de la imagen
-    final product = await _productRepository.getProductById(event.productId);
-    
-    if (product != null) {
-      // 2. Eliminar la imagen de Firebase Storage si existe
-      if (product.imageUrl.isNotEmpty) {
-        try {
-          await _storageService.deleteImageFromUrl(product.imageUrl);
-        } catch (e) {
-          print('Error al eliminar imagen: ${e.toString()}');
+    DeleteProduct event,
+    Emitter<ProductState> emit,
+  ) async {
+    emit(ProductLoading());
+    try {
+      // 1. Obtener el producto primero para tener la URL de la imagen
+      final product = await _productRepository.getProductById(event.productId);
+
+      if (product != null) {
+        // 2. Eliminar la imagen de Firebase Storage si existe
+        if (product.imageUrl.isNotEmpty) {
+          try {
+            await _storageService.deleteImageFromUrl(product.imageUrl);
+          } catch (e) {
+            print('Error al eliminar imagen: ${e.toString()}');
+          }
         }
+
+        // 3. Eliminar el producto de Firestore
+        await _productRepository.deleteProduct(event.productId);
+
+        emit(ProductSuccess());
+
+        // 4. Recargar productos
+        add(LoadProducts());
+      } else {
+        emit(ProductFailure('Producto no encontrado'));
       }
-      
-      // 3. Eliminar el producto de Firestore
-      await _productRepository.deleteProduct(event.productId);
-      
+    } catch (e) {
+      emit(ProductFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateProduct(
+    UpdateProduct event,
+    Emitter<ProductState> emit,
+  ) async {
+    emit(ProductLoading());
+    try {
+      String imageUrl = event.currentImageUrl;
+
+      // 1. Si hay nueva imagen, subirla y eliminar la anterior
+      if (event.newImageFile != null) {
+        // Subir nueva imagen
+        final newImageUrl = await _storageService.uploadProductImage(
+          event.newImageFile!,
+        );
+
+        // Eliminar imagen anterior si existe y es diferente
+        if (imageUrl.isNotEmpty && imageUrl != newImageUrl) {
+          try {
+            await _storageService.deleteImageFromUrl(imageUrl);
+          } catch (e) {
+            print('Error al eliminar imagen anterior: ${e.toString()}');
+          }
+        }
+
+        imageUrl = newImageUrl;
+      }
+
+      // 2. Crear objeto Product actualizado
+      final updatedProduct = Product(
+        id: event.productId,
+        name: event.name,
+        price: event.price,
+        description: event.description,
+        category: event.category,
+        imageUrl: imageUrl,
+        createdAt: event.createdAt, // Mantener fecha original
+      );
+
+      // 3. Actualizar en Firestore
+      await _productRepository.updateProduct(updatedProduct);
+
       emit(ProductSuccess());
-      
+
       // 4. Recargar productos
       add(LoadProducts());
-    } else {
-      emit(ProductFailure('Producto no encontrado'));
+    } catch (e) {
+      emit(ProductFailure(e.toString()));
     }
-  } catch (e) {
-    emit(ProductFailure(e.toString()));
   }
-}
 }

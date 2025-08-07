@@ -68,7 +68,9 @@ class ProductRepository {
           .collection('products')
           .doc(productId)
           .get();
-      return doc.exists ? Product.fromMap(doc.id, doc.data() as Map<String, dynamic>) : null;
+      return doc.exists
+          ? Product.fromMap(doc.id, doc.data() as Map<String, dynamic>)
+          : null;
     } on FirebaseException catch (e) {
       throw Exception('Error al obtener producto: ${e.message}');
     }
@@ -77,13 +79,12 @@ class ProductRepository {
   // Actualiza un producto existente
   Future<void> updateProduct(Product product) async {
     try {
-      final productData = product.toMap();
-      await _firestore
+      await FirebaseFirestore.instance
           .collection('products')
           .doc(product.id)
-          .update(productData);
-    } catch (e) {
-      throw Exception('Error al actualizar producto: ${e.toString()}');
+          .update(product.toMap());
+    } on FirebaseException catch (e) {
+      throw Exception('Error al actualizar producto: ${e.message}');
     }
   }
 }

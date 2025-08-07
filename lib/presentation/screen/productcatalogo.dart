@@ -1,18 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:store/constants/categories.dart';
 import 'package:store/presentation/produc/bloc/product_bloc.dart';
 import 'package:store/theme/app_colors.dart';
 import '../../models/models.dart';
 import '../../utils/utils.dart';
 import '../../widgets/widgets.dart';
 
-class ProductCatalogScreen extends StatelessWidget {
+class ProductCatalogScreen extends StatefulWidget {
   const ProductCatalogScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    context.read<ProductBloc>().add(const LoadProducts());
+  State<ProductCatalogScreen> createState() => _ProductCatalogScreenState();
+}
 
+class _ProductCatalogScreenState extends State<ProductCatalogScreen>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: productCategories.length + 1, // +1 para "Todos"
+      vsync: this,
+    );
+    context.read<ProductBloc>().add(const LoadProducts());
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -29,10 +52,8 @@ class ProductCatalogScreen extends StatelessWidget {
           icon: const Icon(Icons.search, size: 28),
           color: AppColors.iconPrimary,
           onPressed: () {
-            // Obtener los productos actuales del estado del BLoC
             final state = context.read<ProductBloc>().state;
             final products = state is ProductLoadSuccess ? state.products : [];
-
             showSearch(
               context: context,
               delegate: ProductSearchDelegate(
@@ -41,45 +62,102 @@ class ProductCatalogScreen extends StatelessWidget {
             );
           },
         ),
-        // ignore: deprecated_member_use
-        shadowColor: AppColors.secondary.withOpacity(0.5),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(bottom: Radius.circular(20)),
-        ),
         actions: [
-          // Botón de notificaciones (opcional)
           IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
-          // Botón de carrito (opcional)
           IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {}),
         ],
       ),
-      body: BlocBuilder<ProductBloc, ProductState>(
-        builder: (context, state) {
-          if (state is ProductLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is ProductLoadSuccess) {
-            return _buildProductList(state.products);
-          } else if (state is ProductFailure) {
-            return Center(child: Text('Error: ${state.error}'));
-          }
-          return const Center(child: Text('No hay productos disponibles'));
-        },
+      body: Column(
+        children: [
+          // TabBar
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(16),
+                bottomRight: Radius.circular(16),
+              ),
+              color: AppColors.secondary,
+            ),
+            child: TabBar(
+              controller: _tabController,
+              isScrollable: true,
+              indicatorColor: Colors.white,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+              labelStyle: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              tabs: [
+                const Tab(
+                  text: 'Todos',
+                  icon: Icon(Icons.all_inclusive, size: 20),
+                ),
+                ...productCategories.map(
+                  (category) => Tab(
+                    text: category.label,
+                    icon: Icon(category.icon, size: 20),
+
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Contenido de los tabs
+          Expanded(
+            child: BlocBuilder<ProductBloc, ProductState>(
+              builder: (context, state) {
+                if (state is ProductLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is ProductLoadSuccess) {
+                  return TabBarView(
+                    controller: _tabController,
+                    children: [
+                      // Tab "Todos"
+                      _buildProductList(state.products),
+                      // Tabs de categorías
+                      ...productCategories.map((category) {
+                        final filteredProducts = state.products
+                            .where((p) => p.category == category.value)
+                            .toList();
+                        return _buildProductList(filteredProducts);
+                      }),
+                    ],
+                  );
+                } else if (state is ProductFailure) {
+                  return Center(child: Text('Error: ${state.error}'));
+                }
+                return const Center(
+                  child: Text('No hay productos disponibles'),
+                );
+              },
+            ),
+          ),
+        ],
       ),
       floatingActionButton: CustomFloatingActionButton(context: context),
     );
   }
 
   Widget _buildProductList(List<Product> products) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-        childAspectRatio: 0.61, // Proporción ajustada para evitar overflow
-      ),
-      itemCount: products.length,
-      itemBuilder: (context, index) => ProductCard(product: products[index]),
-    );
+    return products.isEmpty
+        ? const Center(
+            child: Text(
+              'No hay productos en esta categoría',
+              style: TextStyle(fontSize: 16),
+            ),
+          )
+        : GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.61,
+            ),
+            itemCount: products.length,
+            itemBuilder: (context, index) =>
+                ProductCard(product: products[index]),
+          );
   }
 }

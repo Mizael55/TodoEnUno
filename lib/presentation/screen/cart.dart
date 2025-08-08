@@ -159,10 +159,10 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildCartItem(BuildContext context, CartItem product) {
+  Widget _buildCartItem(BuildContext context, CartItem cartItem) {
     // Asumiendo que cada producto en el carrito tiene una propiedad quantity
     // Si no la tiene, necesitarías modificar tu modelo Product o usar un modelo CartItem
-    final quantity = product.quantity ?? 1;
+    final quantity = cartItem.quantity ?? 1;
 
     return Container(
       decoration: BoxDecoration(
@@ -188,7 +188,7 @@ class CartScreen extends StatelessWidget {
               width: 100,
               height: 100,
               child: CachedNetworkImage(
-                imageUrl: product.product.imageUrl,
+                imageUrl: cartItem.product.imageUrl,
                 fit: BoxFit.cover,
                 placeholder: (_, __) => Container(
                   color: Colors.grey[100],
@@ -223,7 +223,7 @@ class CartScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          product.product.name,
+                          cartItem.product.name,
                           style: const TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
@@ -235,7 +235,7 @@ class CartScreen extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: () => context.read<CartBloc>().add(
-                          RemoveFromCartEvent(product.id),
+                          RemoveFromCartEvent(cartItem.id),
                         ),
                         icon: Icon(
                           Icons.close_rounded,
@@ -249,7 +249,7 @@ class CartScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    product.product.category.toUpperCase(),
+                    cartItem.product.category.toUpperCase(),
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -264,7 +264,7 @@ class CartScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '\$${(product.product.price * quantity).toStringAsFixed(2)}',
+                        '\$${(cartItem.product.price * quantity).toStringAsFixed(2)}',
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -285,7 +285,8 @@ class CartScreen extends StatelessWidget {
                               onPressed: quantity > 1
                                   ? () => context.read<CartBloc>().add(
                                       UpdateCartItemQuantityEvent(
-                                        productId: product.id,
+                                        cartItemId: cartItem
+                                            .id, 
                                         newQuantity: quantity - 1,
                                       ),
                                     )
@@ -306,7 +307,7 @@ class CartScreen extends StatelessWidget {
                             IconButton(
                               onPressed: () => context.read<CartBloc>().add(
                                 UpdateCartItemQuantityEvent(
-                                  productId: product.id,
+                                  cartItemId: cartItem.id, 
                                   newQuantity: quantity + 1,
                                 ),
                               ),
@@ -427,10 +428,9 @@ class CartScreen extends StatelessWidget {
     );
   }
 
-  double _calculateSubtotal(List<CartItem> items) {
-    return items.fold(
-      0,
-      (sum, item) => sum + (item.product.price * (item.quantity ?? 1)),
-    );
+  double _calculateSubtotal(List<CartItem> cartItems) {
+    return cartItems.fold(0.0, (total, item) {
+      return total + (item.product.price * (item.quantity ?? 1));
+    });
   }
 }

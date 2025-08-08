@@ -71,25 +71,19 @@ class CartRepository {
 
   /// Actualiza la cantidad de un producto en el carrito
   Future<void> updateQuantity({
-    required String productId,
-    required int newQuantity,
-  }) async {
-    try {
-      final query = await _cartRef
-          .where('product.id', isEqualTo: productId)
-          .limit(1)
-          .get();
-      
-      if (query.docs.isNotEmpty) {
-        await _cartRef.doc(query.docs.first.id).update({
-          'quantity': newQuantity,
-          'updatedAt': FieldValue.serverTimestamp(),
-        });
-      }
-    } catch (e) {
-      throw Exception('Error al actualizar cantidad: $e');
-    }
+  required String cartItemId, 
+  required int newQuantity,
+}) async {
+  try {
+    // Ahora usamos directamente el ID del documento del carrito
+    await _cartRef.doc(cartItemId).update({
+      'quantity': newQuantity,
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  } catch (e) {
+    throw Exception('Error al actualizar cantidad: $e');
   }
+}
 
   /// Obtiene todos los items del carrito
   Future<List<CartItem>> getCartItems() async {

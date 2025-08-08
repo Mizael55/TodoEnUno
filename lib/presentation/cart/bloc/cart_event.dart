@@ -33,16 +33,13 @@ class RemoveFromCartEvent extends CartEvent {
 
 /// Evento para actualizar la cantidad de un producto en el carrito
 class UpdateCartItemQuantityEvent extends CartEvent {
-  final String productId;
+  final String cartItemId;  // Cambiar nombre del parámetro
   final int newQuantity;
 
   const UpdateCartItemQuantityEvent({
-    required this.productId,
+    required this.cartItemId,
     required this.newQuantity,
   });
-
-  @override
-  List<Object> get props => [productId, newQuantity];
 }
 
 /// Evento para cargar el carrito desde el repositorio

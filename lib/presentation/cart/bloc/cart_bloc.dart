@@ -41,7 +41,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       add(LoadCartEvent());
     } else {
       // Usuario no autenticado - limpiar estado
-      emit( CartLoaded([]));
+      emit(CartLoaded([]));
     }
   }
 
@@ -92,7 +92,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       emit(CartLoading());
       await cartRepository.updateQuantity(
-        productId: event.productId,
+        cartItemId: event.cartItemId, // Usar el nuevo nombre
         newQuantity: event.newQuantity,
       );
       final items = await cartRepository.getCartItems();
@@ -105,10 +105,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     }
   }
 
-  Future<void> _onLoadCart(
-    LoadCartEvent event,
-    Emitter<CartState> emit,
-  ) async {
+  Future<void> _onLoadCart(LoadCartEvent event, Emitter<CartState> emit) async {
     try {
       emit(CartLoading());
       final items = await cartRepository.getCartItems();
@@ -125,7 +122,7 @@ class CartBloc extends Bloc<CartEvent, CartState> {
     try {
       emit(CartLoading());
       await cartRepository.clearCart();
-      emit( CartLoaded([]));
+      emit(CartLoaded([]));
     } catch (e) {
       emit(CartError('Error al vaciar el carrito: ${e.toString()}'));
     }

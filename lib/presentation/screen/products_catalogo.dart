@@ -68,7 +68,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
           IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
           IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {
             Navigator.push(context, MaterialPageRoute(
-              builder: (context) => const CartScreen(cartItems: [],),
+              builder: (context) => const CartScreen(),
             ));
           }),
         ],

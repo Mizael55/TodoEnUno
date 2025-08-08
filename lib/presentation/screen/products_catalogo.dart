@@ -7,6 +7,7 @@ import 'package:store/theme/app_colors.dart';
 import '../../models/models.dart';
 import '../../utils/utils.dart';
 import '../../widgets/widgets.dart';
+import 'screen.dart';
 
 class ProductCatalogScreen extends StatefulWidget {
   const ProductCatalogScreen({super.key});
@@ -65,7 +66,11 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
         ),
         actions: [
           IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {}),
+          IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => const CartScreen(cartItems: [],),
+            ));
+          }),
         ],
       ),
       body: Column(
@@ -189,7 +194,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
               crossAxisCount: 2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 0.61,
+              childAspectRatio: 0.60,
             ),
             itemCount: products.length,
             itemBuilder: (context, index) =>

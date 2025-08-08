@@ -12,7 +12,7 @@ class ProductCard extends StatelessWidget {
   final VoidCallback? onEdit;
 
   const ProductCard({
-    super.key, 
+    super.key,
     required this.product,
     this.onDelete,
     this.onEdit,
@@ -54,7 +54,7 @@ class ProductCard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => 
+                                builder: (context) =>
                                     ProductDetailScreen(product: product),
                               ),
                             );
@@ -94,7 +94,8 @@ class ProductCard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EditProductScreen(product: product),
+                                builder: (context) =>
+                                    EditProductScreen(product: product),
                               ),
                             );
                           },
@@ -118,7 +119,8 @@ class ProductCard extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => DeleteProductScreen(product: product),
+                                builder: (context) =>
+                                    DeleteProductScreen(product: product),
                               ),
                             );
                           },
@@ -149,16 +151,35 @@ class ProductCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Categoría
-                    Text(
-                      product.category.toUpperCase(),
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textSecondary,
-                        letterSpacing: 0.5,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        Text(
+                          product.category.toUpperCase(),
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textSecondary,
+                            letterSpacing: 0.5,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+
+                        // agrega el icono para agregarlo al carrito
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            // Aquí puedes agregar la lógica para agregar al carrito
+                            print('Agregando ${product.name} al carrito');
+                          
+                          },
+                          child: Icon(
+                            Icons.add_shopping_cart,
+                            size: 20,
+                            color: AppColors.secondary,
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 6),
 
@@ -171,7 +192,7 @@ class ProductCard extends StatelessWidget {
                         height: 1.3,
                         color: AppColors.textPrimary,
                       ),
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
@@ -184,6 +205,8 @@ class ProductCard extends StatelessWidget {
                         fontSize: 16,
                         color: AppColors.secondary,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
 
                     // Fecha

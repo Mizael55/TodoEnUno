@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:store/presentation/auth/bloc/repositories/auth_repository.dart';
+import 'package:store/presentation/auth/bloc/repository/auth_repository.dart';
 
 import '../../../models/models.dart';
 

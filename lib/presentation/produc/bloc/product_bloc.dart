@@ -5,7 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:store/presentation/produc/bloc/services/firebase_storage_service.dart';
 import '../../../models/models.dart';
-import 'repositories/product_repository.dart';
+import 'repository/product_repository.dart';
 
 part 'product_event.dart';
 part 'product_state.dart';

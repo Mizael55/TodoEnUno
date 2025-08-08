@@ -18,17 +18,14 @@ class ProductDetailScreen extends StatelessWidget {
             expandedHeight: 350,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: Hero(
-                tag: 'product-image-${product.id}',
-                child: CachedNetworkImage(
-                  imageUrl: product.imageUrl,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Colors.grey[200],
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+              background: CachedNetworkImage(
+                imageUrl: product.imageUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: Colors.grey[200],
+                  child: Center(child: CircularProgressIndicator()),
                 ),
+                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
             ),
             leading: IconButton(

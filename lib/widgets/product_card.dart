@@ -47,35 +47,32 @@ class ProductCard extends StatelessWidget {
                     ),
                     child: AspectRatio(
                       aspectRatio: 1,
-                      child: Hero(
-                        tag: 'product-image-${product.id}',
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ProductDetailScreen(product: product),
-                              ),
-                            );
-                          },
-                          child: CachedNetworkImage(
-                            imageUrl: product.imageUrl,
-                            fit: BoxFit.cover,
-                            placeholder: (context, url) => Container(
-                              color: Colors.grey[100],
-                              child: Center(
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: AppColors.primary.withOpacity(0.5),
-                                ),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ProductDetailScreen(product: product),
+                            ),
+                          );
+                        },
+                        child: CachedNetworkImage(
+                          imageUrl: product.imageUrl,
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: Colors.grey[100],
+                            child: Center(
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.primary.withOpacity(0.5),
                               ),
                             ),
-                            errorWidget: (context, url, error) => Container(
-                              color: Colors.grey[200],
-                              child: const Center(
-                                child: Icon(Icons.image_not_supported_outlined),
-                              ),
+                          ),
+                          errorWidget: (context, url, error) => Container(
+                            color: Colors.grey[200],
+                            child: const Center(
+                              child: Icon(Icons.image_not_supported_outlined),
                             ),
                           ),
                         ),
@@ -171,7 +168,6 @@ class ProductCard extends StatelessWidget {
                           onTap: () {
                             // Aquí puedes agregar la lógica para agregar al carrito
                             print('Agregando ${product.name} al carrito');
-                          
                           },
                           child: Icon(
                             Icons.add_shopping_cart,

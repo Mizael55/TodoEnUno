@@ -145,12 +145,9 @@ class _EditProductScreenState extends State<EditProductScreen> {
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(color: Colors.grey.shade300),
                         ),
-                        child: Hero(
-                          tag: 'product-image-${widget.product.id}',
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: _buildImagePreview(),
-                          ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: _buildImagePreview(),
                         ),
                       ),
                       Positioned(

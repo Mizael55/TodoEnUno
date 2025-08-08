@@ -49,21 +49,18 @@ class DeleteProductScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Imagen del producto
-            Hero(
-              tag: 'product-image-${product.id}',
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  product.imageUrl,
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.network(
+                product.imageUrl,
+                width: 200,
+                height: 200,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Container(
                   width: 200,
                   height: 200,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    width: 200,
-                    height: 200,
-                    color: Colors.grey[200],
-                    child: const Icon(Icons.image_not_supported_outlined),
-                  ),
+                  color: Colors.grey[200],
+                  child: const Icon(Icons.image_not_supported_outlined),
                 ),
               ),
             ),

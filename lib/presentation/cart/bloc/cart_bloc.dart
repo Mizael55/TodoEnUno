@@ -69,21 +69,23 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   Future<void> _onRemoveFromCart(
-  RemoveFromCartEvent event,
-  Emitter<CartState> emit,
-) async {
-  try {
-    emit(CartLoading());
-    await cartRepository.removeFromCart(event.cartItemId);  // Usar el nuevo nombre
-    final items = await cartRepository.getCartItems();
-    emit(CartLoaded(items));
-  } catch (e) {
-    emit(CartError('Error al remover del carrito: ${e.toString()}'));
-    if (state is CartLoaded) {
-      emit(state);
+    RemoveFromCartEvent event,
+    Emitter<CartState> emit,
+  ) async {
+    try {
+      emit(CartLoading());
+      await cartRepository.removeFromCart(
+        event.cartItemId,
+      ); // Usar el nuevo nombre
+      final items = await cartRepository.getCartItems();
+      emit(CartLoaded(items));
+    } catch (e) {
+      emit(CartError('Error al remover del carrito: ${e.toString()}'));
+      if (state is CartLoaded) {
+        emit(state);
+      }
     }
   }
-}
 
   Future<void> _onUpdateQuantity(
     UpdateCartItemQuantityEvent event,

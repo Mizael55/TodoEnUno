@@ -6,11 +6,9 @@ class CartRepository {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
 
-  CartRepository({
-    FirebaseFirestore? firestore,
-    FirebaseAuth? auth,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+  CartRepository({FirebaseFirestore? firestore, FirebaseAuth? auth})
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      _auth = auth ?? FirebaseAuth.instance;
 
   /// Referencia a la colección del carrito para el usuario actual
   CollectionReference<Map<String, dynamic>> get _cartRef {
@@ -22,10 +20,7 @@ class CartRepository {
   }
 
   /// Agrega un producto al carrito
-  Future<void> addToCart({
-    required Product product,
-    int quantity = 1,
-  }) async {
+  Future<void> addToCart({required Product product, int quantity = 1}) async {
     try {
       // Verificar autenticación primero
       if (_auth.currentUser == null) {
@@ -53,30 +48,31 @@ class CartRepository {
       throw Exception('Error al agregar al carrito: $e');
     }
   }
+
   /// Remueve un producto del carrito
   Future<void> removeFromCart(String cartItemId) async {
-  try {
-    await _cartRef.doc(cartItemId).delete();
-  } catch (e) {
-    throw Exception('Error al remover del carrito: $e');
+    try {
+      await _cartRef.doc(cartItemId).delete();
+    } catch (e) {
+      throw Exception('Error al remover del carrito: $e');
+    }
   }
-}
 
   /// Actualiza la cantidad de un producto en el carrito
   Future<void> updateQuantity({
-  required String cartItemId, 
-  required int newQuantity,
-}) async {
-  try {
-    // Ahora usamos directamente el ID del documento del carrito
-    await _cartRef.doc(cartItemId).update({
-      'quantity': newQuantity,
-      'updatedAt': FieldValue.serverTimestamp(),
-    });
-  } catch (e) {
-    throw Exception('Error al actualizar cantidad: $e');
+    required String cartItemId,
+    required int newQuantity,
+  }) async {
+    try {
+      // Ahora usamos directamente el ID del documento del carrito
+      await _cartRef.doc(cartItemId).update({
+        'quantity': newQuantity,
+        'updatedAt': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      throw Exception('Error al actualizar cantidad: $e');
+    }
   }
-}
 
   /// Obtiene todos los items del carrito
   Future<List<CartItem>> getCartItems() async {
@@ -86,7 +82,10 @@ class CartRepository {
         final data = doc.data();
         return CartItem(
           id: doc.id,
-          product: Product.fromMap(data['product']['id'] ?? '', data['product']),
+          product: Product.fromMap(
+            data['product']['id'] ?? '',
+            data['product'],
+          ),
           quantity: data['quantity'] ?? 1,
           createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
         );
@@ -101,11 +100,11 @@ class CartRepository {
     try {
       final batch = _firestore.batch();
       final snapshot = await _cartRef.get();
-      
+
       for (final doc in snapshot.docs) {
         batch.delete(doc.reference);
       }
-      
+
       await batch.commit();
     } catch (e) {
       throw Exception('Error al vaciar el carrito: $e');

@@ -167,29 +167,33 @@ class ProductCard extends StatelessWidget {
                         // agrega el icono para agregarlo al carrito
                         const Spacer(),
                         GestureDetector(
-                          onTap: () {
-                            // Aquí puedes agregar la lógica para agregar al carrito
-                            print('Agregando ${product.name} al carrito');
-                            // Obtener el CartBloc del contexto
-                            final cartBloc = BlocProvider.of<CartBloc>(context);
+                          onTap: () async {
+                            try {
+                              final cartBloc = BlocProvider.of<CartBloc>(
+                                context,
+                              );
+                              cartBloc.add(
+                                AddToCartEvent(product: product, quantity: 1),
+                              );
 
-                            // Disparar el evento para agregar al carrito
-                            cartBloc.add(
-                              AddToCartEvent(
-                                product: product,
-                                quantity: 1, // Cantidad por defecto
-                              ),
-                            );
-
-                            // Opcional: Mostrar feedback visual
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '${product.name} agregado al carrito',
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '${product.name} agregado al carrito',
+                                  ),
+                                  backgroundColor: AppColors.secondary,
+                                  duration: const Duration(seconds: 1),
                                 ),
-                                duration: const Duration(seconds: 1),
-                              ),
-                            );
+                              );
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(e.toString()),
+                                  backgroundColor: Colors.red,
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                            }
                           },
                           child: Icon(
                             Icons.add_shopping_cart,

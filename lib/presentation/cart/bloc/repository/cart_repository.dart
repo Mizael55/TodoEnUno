@@ -54,20 +54,13 @@ class CartRepository {
     }
   }
   /// Remueve un producto del carrito
-  Future<void> removeFromCart(String productId) async {
-    try {
-      final query = await _cartRef
-          .where('product.id', isEqualTo: productId)
-          .limit(1)
-          .get();
-      
-      if (query.docs.isNotEmpty) {
-        await _cartRef.doc(query.docs.first.id).delete();
-      }
-    } catch (e) {
-      throw Exception('Error al remover del carrito: $e');
-    }
+  Future<void> removeFromCart(String cartItemId) async {
+  try {
+    await _cartRef.doc(cartItemId).delete();
+  } catch (e) {
+    throw Exception('Error al remover del carrito: $e');
   }
+}
 
   /// Actualiza la cantidad de un producto en el carrito
   Future<void> updateQuantity({

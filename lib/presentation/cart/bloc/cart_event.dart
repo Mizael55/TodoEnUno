@@ -23,12 +23,9 @@ class AddToCartEvent extends CartEvent {
 
 /// Evento para remover un producto del carrito
 class RemoveFromCartEvent extends CartEvent {
-  final String productId;
+  final String cartItemId;  // Cambiar nombre del parámetro
 
-  const RemoveFromCartEvent(this.productId);
-
-  @override
-  List<Object> get props => [productId];
+  const RemoveFromCartEvent(this.cartItemId);
 }
 
 /// Evento para actualizar la cantidad de un producto en el carrito

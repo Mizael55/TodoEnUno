@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:store/firebase_options.dart';
 import 'package:store/presentation/auth/bloc/auth_bloc.dart';
 import 'package:store/presentation/auth/bloc/repository/auth_repository.dart';
+import 'package:store/presentation/cart/bloc/cart_bloc.dart';
+import 'package:store/presentation/cart/bloc/repository/cart_repository.dart';
 import 'package:store/presentation/produc/bloc/product_bloc.dart';
 import 'package:store/presentation/produc/bloc/repository/product_repository.dart';
 import 'package:store/presentation/produc/bloc/services/firebase_storage_service.dart';
@@ -27,6 +29,7 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(create: (context) => AuthRepository()),
         RepositoryProvider(create: (context) => ProductRepository()),
         RepositoryProvider(create: (context) => FirebaseStorageService()),
+        RepositoryProvider(create: (context) => CartRepository()), 
       ],
       child: MultiBlocProvider(
         providers: [
@@ -48,6 +51,11 @@ class MyApp extends StatelessWidget {
               storageService: RepositoryProvider.of<FirebaseStorageService>(
                 context,
               ),
+            ),
+          ),
+          BlocProvider(
+            create: (context) => CartBloc(
+              cartRepository: RepositoryProvider.of<CartRepository>(context),
             ),
           ),
         ],

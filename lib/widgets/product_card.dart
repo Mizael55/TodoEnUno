@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:store/presentation/cart/bloc/cart_bloc.dart';
 import 'package:store/theme/app_colors.dart';
 import '../models/models.dart';
 import '../presentation/screen/screen.dart';
@@ -168,6 +170,26 @@ class ProductCard extends StatelessWidget {
                           onTap: () {
                             // Aquí puedes agregar la lógica para agregar al carrito
                             print('Agregando ${product.name} al carrito');
+                            // Obtener el CartBloc del contexto
+                            final cartBloc = BlocProvider.of<CartBloc>(context);
+
+                            // Disparar el evento para agregar al carrito
+                            cartBloc.add(
+                              AddToCartEvent(
+                                product: product,
+                                quantity: 1, // Cantidad por defecto
+                              ),
+                            );
+
+                            // Opcional: Mostrar feedback visual
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  '${product.name} agregado al carrito',
+                                ),
+                                duration: const Duration(seconds: 1),
+                              ),
+                            );
                           },
                           child: Icon(
                             Icons.add_shopping_cart,

@@ -1,69 +1,93 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:store/models/models.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../../../models/models.dart';
 
 class CartRepository {
   final FirebaseFirestore _firestore;
-  late final String userId; // Aquí usaremos el uid del UserModel
+  final FirebaseAuth _auth;
 
-  CartRepository({required this.userId, FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+  CartRepository({
+    FirebaseFirestore? firestore,
+    FirebaseAuth? auth,
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
+        _auth = auth ?? FirebaseAuth.instance;
 
-  // Referencia al carrito del usuario
-  CollectionReference get _cartRef => 
-      _firestore.collection('users').doc(userId).collection('cart');
+  /// Referencia a la colección del carrito para el usuario actual
+  CollectionReference<Map<String, dynamic>> get _cartRef {
+    final userId = _auth.currentUser?.uid;
+    if (userId == null) {
+      throw Exception('Usuario no autenticado');
+    }
+    return _firestore.collection('users').doc(userId).collection('cart');
+  }
 
-  /// Agrega un producto al carrito o incrementa su cantidad si ya existe
-  Future<void> addToCart(Product product, {int quantity = 1}) async {
+  /// Agrega un producto al carrito
+  Future<void> addToCart({
+    required Product product,
+    int quantity = 1,
+  }) async {
     try {
-      // Verificar si el producto ya está en el carrito
-      final query = await _cartRef
+      // Verificar autenticación primero
+      if (_auth.currentUser == null) {
+        throw Exception('Debes iniciar sesión para agregar al carrito');
+      }
+
+      final existingItem = await _cartRef
           .where('product.id', isEqualTo: product.id)
           .limit(1)
           .get();
 
-      if (query.docs.isNotEmpty) {
-        // Actualizar cantidad si ya existe
-        await _cartRef.doc(query.docs.first.id).update({
+      if (existingItem.docs.isNotEmpty) {
+        await _cartRef.doc(existingItem.docs.first.id).update({
           'quantity': FieldValue.increment(quantity),
           'updatedAt': FieldValue.serverTimestamp(),
         });
       } else {
-        // Agregar nuevo item al carrito con los datos completos del producto
         await _cartRef.add({
           'product': product.toMap(),
           'quantity': quantity,
           'createdAt': FieldValue.serverTimestamp(),
-          'updatedAt': FieldValue.serverTimestamp(),
         });
       }
     } catch (e) {
-      throw Exception('Error al agregar al carrito: ${e.toString()}');
+      throw Exception('Error al agregar al carrito: $e');
     }
   }
-
-  /// Elimina un producto del carrito
-  Future<void> removeFromCart(String cartItemId) async {
+  /// Remueve un producto del carrito
+  Future<void> removeFromCart(String productId) async {
     try {
-      await _cartRef.doc(cartItemId).delete();
+      final query = await _cartRef
+          .where('product.id', isEqualTo: productId)
+          .limit(1)
+          .get();
+      
+      if (query.docs.isNotEmpty) {
+        await _cartRef.doc(query.docs.first.id).delete();
+      }
     } catch (e) {
-      throw Exception('Error al eliminar del carrito: ${e.toString()}');
+      throw Exception('Error al remover del carrito: $e');
     }
   }
 
   /// Actualiza la cantidad de un producto en el carrito
-  Future<void> updateQuantity(String cartItemId, int newQuantity) async {
+  Future<void> updateQuantity({
+    required String productId,
+    required int newQuantity,
+  }) async {
     try {
-      if (newQuantity <= 0) {
-        await removeFromCart(cartItemId);
-        return;
+      final query = await _cartRef
+          .where('product.id', isEqualTo: productId)
+          .limit(1)
+          .get();
+      
+      if (query.docs.isNotEmpty) {
+        await _cartRef.doc(query.docs.first.id).update({
+          'quantity': newQuantity,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
       }
-
-      await _cartRef.doc(cartItemId).update({
-        'quantity': newQuantity,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
     } catch (e) {
-      throw Exception('Error al actualizar cantidad: ${e.toString()}');
+      throw Exception('Error al actualizar cantidad: $e');
     }
   }
 
@@ -71,34 +95,21 @@ class CartRepository {
   Future<List<CartItem>> getCartItems() async {
     try {
       final snapshot = await _cartRef.get();
-      return _mapSnapshotToCartItems(snapshot);
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        return CartItem(
+          id: doc.id,
+          product: Product.fromMap(data['product']['id'] ?? '', data['product']),
+          quantity: data['quantity'] ?? 1,
+          createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+        );
+      }).toList();
     } catch (e) {
-      throw Exception('Error al obtener carrito: ${e.toString()}');
+      throw Exception('Error al obtener el carrito: $e');
     }
   }
 
-  /// Stream de cambios en el carrito
-  Stream<List<CartItem>> streamCartItems() {
-    return _cartRef
-        .orderBy('updatedAt', descending: true)
-        .snapshots()
-        .asyncMap((snapshot) => _mapSnapshotToCartItems(snapshot));
-  }
-
-  /// Mapea los documentos de Firestore a objetos CartItem
-  Future<List<CartItem>> _mapSnapshotToCartItems(QuerySnapshot snapshot) async {
-    return snapshot.docs.map((doc) {
-      final data = doc.data() as Map<String, dynamic>;
-      return CartItem(
-        id: doc.id,
-        product: Product.fromMap(data['product'], data['product']['id']),
-        quantity: data['quantity'] ?? 1,
-        createdAt: data['createdAt']?.toDate(),
-      );
-    }).toList();
-  }
-
-  /// Limpia todo el carrito
+  /// Vacía completamente el carrito
   Future<void> clearCart() async {
     try {
       final batch = _firestore.batch();
@@ -110,7 +121,7 @@ class CartRepository {
       
       await batch.commit();
     } catch (e) {
-      throw Exception('Error al vaciar el carrito: ${e.toString()}');
+      throw Exception('Error al vaciar el carrito: $e');
     }
   }
 }

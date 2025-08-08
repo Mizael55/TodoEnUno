@@ -194,7 +194,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
               crossAxisCount: 2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 0.60,
+              childAspectRatio: 0.58,
             ),
             itemCount: products.length,
             itemBuilder: (context, index) =>

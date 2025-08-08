@@ -1,8 +1,61 @@
 part of 'cart_bloc.dart';
 
-sealed class CartEvent extends Equatable {
+abstract class CartEvent extends Equatable {
   const CartEvent();
 
   @override
   List<Object> get props => [];
+}
+
+/// Evento para agregar un producto al carrito
+class AddToCartEvent extends CartEvent {
+  final Product product;
+  final int quantity;
+
+  const AddToCartEvent({
+    required this.product,
+    this.quantity = 1,
+  });
+
+  @override
+  List<Object> get props => [product, quantity];
+}
+
+/// Evento para remover un producto del carrito
+class RemoveFromCartEvent extends CartEvent {
+  final String productId;
+
+  const RemoveFromCartEvent(this.productId);
+
+  @override
+  List<Object> get props => [productId];
+}
+
+/// Evento para actualizar la cantidad de un producto en el carrito
+class UpdateCartItemQuantityEvent extends CartEvent {
+  final String productId;
+  final int newQuantity;
+
+  const UpdateCartItemQuantityEvent({
+    required this.productId,
+    required this.newQuantity,
+  });
+
+  @override
+  List<Object> get props => [productId, newQuantity];
+}
+
+/// Evento para cargar el carrito desde el repositorio
+class LoadCartEvent extends CartEvent {}
+
+/// Evento para vaciar completamente el carrito
+class ClearCartEvent extends CartEvent {}
+
+class AuthChangedEvent extends CartEvent {
+  final User? user;
+
+  const AuthChangedEvent({required this.user});
+
+  @override
+  List<Object> get props => [user ?? Object()];
 }

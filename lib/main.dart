@@ -8,7 +8,6 @@ import 'package:store/presentation/produc/bloc/product_bloc.dart';
 import 'package:store/presentation/produc/bloc/repository/product_repository.dart';
 import 'package:store/presentation/produc/bloc/services/firebase_storage_service.dart';
 import 'package:store/theme/app_theme.dart';
-import 'presentation/screen/screen.dart';
 import 'widgets/widgets.dart';
 
 void main() async {
@@ -59,12 +58,6 @@ class MyApp extends StatelessWidget {
           darkTheme: AppTheme.darkTheme,
           home:
               const AuthWrapper(), // Widget que manejará la lógica de autenticación
-          onGenerateRoute: (settings) {
-            // Puedes mantener esto para otras rutas
-            return MaterialPageRoute(
-              builder: (context) => const WelcomeScreen(),
-            );
-          },
         ),
       ),
     );

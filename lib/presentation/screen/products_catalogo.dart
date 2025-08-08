@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:store/constants/categories.dart';
 import 'package:store/presentation/auth/bloc/auth_bloc.dart';
+import 'package:store/presentation/cart/bloc/cart_bloc.dart';
 import 'package:store/presentation/produc/bloc/product_bloc.dart';
 import 'package:store/theme/app_colors.dart';
 import '../../models/models.dart';
@@ -38,6 +39,9 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
 
   @override
   Widget build(BuildContext context) {
+    final cartBloc = BlocProvider.of<CartBloc>(context, listen: false);
+    print('CartBloc disponible en widget: ${cartBloc != null}');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -66,11 +70,66 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
         ),
         actions: [
           IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) => const CartScreen(),
-            ));
-          }),
+          BlocListener<CartBloc, CartState>(
+            listener: (context, state) {
+              print('[LISTENER] Estado cambiado: ${state.runtimeType}');
+            },
+            child: BlocBuilder<CartBloc, CartState>(
+              builder: (context, state) {
+                final itemCount = state is CartLoaded
+                    ? state.items.fold(
+                        0,
+                        (sum, item) => sum + (item.quantity ?? 1),
+                      )
+                    : 0;
+
+                print('[BUILDER] Construyendo con itemCount: $itemCount');
+
+                return Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.shopping_cart),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const CartScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    if (state is CartLoaded) ...[
+                      Positioned(
+                        top: 5,
+                        right: 5,
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 16,
+                            minHeight: 16,
+                          ),
+                          child: Text(
+                            '${state.items.length}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                );
+              },
+            ),
+          ),
         ],
       ),
       body: Column(

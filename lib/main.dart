@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         RepositoryProvider(create: (context) => AuthRepository()),
         RepositoryProvider(create: (context) => ProductRepository()),
         RepositoryProvider(create: (context) => FirebaseStorageService()),
-        RepositoryProvider(create: (context) => CartRepository()), 
+        RepositoryProvider(create: (context) => CartRepository()),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(
             create: (context) => CartBloc(
               cartRepository: RepositoryProvider.of<CartRepository>(context),
-            ),
+            )..add(LoadCartEvent()),
           ),
         ],
         child: MaterialApp(

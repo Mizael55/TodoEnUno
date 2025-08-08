@@ -51,10 +51,27 @@ class CartRepository {
 
   /// Remueve un producto del carrito
   Future<void> removeFromCart(String cartItemId) async {
+    print("🔥 Entrando a removeFromCart para ID: $cartItemId");
+
     try {
-      await _cartRef.doc(cartItemId).delete();
+      final userId = _auth.currentUser?.uid;
+      if (userId == null) {
+        print("⚠️ Usuario no autenticado");
+        throw Exception('Usuario no autenticado');
+      }
+
+      print("📌 Referencia a documento: users/$userId/cart/$cartItemId");
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('cart')
+          .doc(cartItemId)
+          .delete();
+
+      print("✅ Documento eliminado exitosamente");
     } catch (e) {
-      throw Exception('Error al remover del carrito: $e');
+      print("💥 Error en removeFromCart: $e");
+      rethrow;
     }
   }
 

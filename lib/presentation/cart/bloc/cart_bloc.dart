@@ -69,23 +69,35 @@ class CartBloc extends Bloc<CartEvent, CartState> {
   }
 
   Future<void> _onRemoveFromCart(
-    RemoveFromCartEvent event,
-    Emitter<CartState> emit,
-  ) async {
-    try {
-      emit(CartLoading());
-      await cartRepository.removeFromCart(
-        event.cartItemId,
-      ); // Usar el nuevo nombre
-      final items = await cartRepository.getCartItems();
-      emit(CartLoaded(items));
-    } catch (e) {
-      emit(CartError('Error al remover del carrito: ${e.toString()}'));
-      if (state is CartLoaded) {
-        emit(state);
-      }
+  RemoveFromCartEvent event,
+  Emitter<CartState> emit,
+) async {
+  print('[BLOC] Iniciando eliminación para item: ${event.cartItemId}');
+  
+  if (state is CartLoaded) {
+    final currentState = state as CartLoaded;
+    print('[BLOC] Items antes de eliminar: ${currentState.items.length}');
+  }
+
+  try {
+    emit(CartLoading());
+    await cartRepository.removeFromCart(event.cartItemId);
+    final items = await cartRepository.getCartItems();
+    
+    print('[BLOC] Items después de eliminar: ${items.length}');
+    emit(CartLoaded(items));
+    
+    if (items.length == (state as CartLoaded).items.length) {
+      print('[BLOC ADVERTENCIA] ¡El conteo de items no cambió después de emitir!');
+    }
+  } catch (e) {
+    print('[BLOC ERROR] $e');
+    emit(CartError('Error: ${e.toString()}'));
+    if (state is CartLoaded) {
+      emit(state);
     }
   }
+}
 
   Future<void> _onUpdateQuantity(
     UpdateCartItemQuantityEvent event,

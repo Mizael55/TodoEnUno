@@ -39,8 +39,6 @@ class DeleteProductScreen extends StatelessWidget {
         actions: [
           // Botón de notificaciones (opcional)
           IconButton(icon: const Icon(Icons.notifications), onPressed: () {}),
-          // Botón de carrito (opcional)
-          IconButton(icon: const Icon(Icons.shopping_cart), onPressed: () {}),
         ],
       ),
       body: Padding(

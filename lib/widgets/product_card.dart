@@ -12,10 +12,12 @@ class ProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback? onDelete;
   final VoidCallback? onEdit;
+  final String userType;
 
   const ProductCard({
     super.key,
     required this.product,
+    required this.userType,
     this.onDelete,
     this.onEdit,
   });
@@ -82,63 +84,65 @@ class ProductCard extends StatelessWidget {
                     ),
                   ),
                   // Iconos de acciones en la esquina superior derecha
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Row(
-                      children: [
-                        // Icono de editar
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    EditProductScreen(product: product),
+                  if (userType ==
+                      'seller') // Solo mostrar si el usuario es vendedor
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Row(
+                        children: [
+                          // Icono de editar
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditProductScreen(product: product),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.9),
+                                shape: BoxShape.circle,
                               ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.edit,
-                              size: 20,
-                              color: AppColors.textPrimary,
+                              child: Icon(
+                                Icons.edit,
+                                size: 20,
+                                color: AppColors.textPrimary,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        // Icono de eliminar
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    DeleteProductScreen(product: product),
+                          const SizedBox(width: 8),
+                          // Icono de eliminar
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      DeleteProductScreen(product: product),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.9),
+                                shape: BoxShape.circle,
                               ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.9),
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.delete,
-                              size: 20,
-                              color: AppColors.error,
+                              child: Icon(
+                                Icons.delete,
+                                size: 20,
+                                color: AppColors.error,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
                 ],
               ),
 
@@ -164,8 +168,9 @@ class ProductCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
 
-                        // agrega el icono para agregarlo al carrito
                         const Spacer(),
+
+                        if (userType != 'seller') 
                         GestureDetector(
                           onTap: () async {
                             try {

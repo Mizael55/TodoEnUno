@@ -230,6 +230,11 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
             label: 'Cerrar sesión',
             onPressedCallback: () {
               context.read<AuthBloc>().add(SignOutRequested());
+              // Navegar a la pantalla de inicio de sesión
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const AuthWrapper()),
+              );
             },
             backgroundColor: AppColors.error,
             icon: Icons.logout,

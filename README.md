@@ -20,7 +20,7 @@ samples, guidance on mobile development, and a full API reference.
 
 Aplicación de e-commerce desarrollada en Flutter con Firebase que permite a los usuarios explorar productos, gestionar un carrito de compras y realizar pedidos, con funcionalidades diferenciadas para usuarios y vendedores.
 
-![Pantalla de inicio](assets/screenshots/Screenshot_1754861993.png) ![Pantalla de Login](assets/screenshots/Screenshot_1754861987.png)
+![Pantalla de Logo](assets/screenshots/Screenshot_1754861983.png) ![Pantalla de Login](assets/screenshots/Screenshot_1754861987.png)
 ![Pantalla de Registro](assets/screenshots/Screenshot_1754861990.png) ![Pantalla de Catalogo](assets/screenshots/Screenshot_1754862180.png) ![Pantalla de detalles](assets/screenshots/Screenshot_1754862660.png) 
 
 ## Tabla de Contenidos
@@ -62,4 +62,7 @@ Sigue estos pasos para configurar el proyecto:
   cloud_firestore: ^6.0.0
   firebase_storage: ^13.0.0
   google_sign_in: ^6.2.1
+
+- Key.properties: en vista de que tienen que generar este archivo y configurar su firma, estar enviando este archivo 
+  por correro junto   al  enlace del repositorio.
 

@@ -21,14 +21,13 @@ samples, guidance on mobile development, and a full API reference.
 Aplicación de e-commerce desarrollada en Flutter con Firebase que permite a los usuarios explorar productos, gestionar un carrito de compras y realizar pedidos, con funcionalidades diferenciadas para usuarios y vendedores.
 
 ![Pantalla de Logo](assets/screenshots/Screenshot_1754861983.png) ![Pantalla de Login](assets/screenshots/Screenshot_1754861987.png)
-![Pantalla de Registro](assets/screenshots/Screenshot_1754861990.png) ![Pantalla de Catalogo](assets/screenshots/Screenshot_1754862180.png) ![Pantalla de detalles](assets/screenshots/Screenshot_1754862660.png) 
+![Pantalla de Registro](assets/screenshots/Screenshot_1754861990.png) ![Pantalla de Catalogo tipo venta](assets/screenshots/Screenshot_1754862180.png) ![Pantalla de Catalogo tipo usuario](assets/screenshots/Screenshot_1754862646.png)  ![Pantalla de detalles](assets/screenshots/Screenshot_1754862660.png) 
 
-## Tabla de Contenidos
-- [Características](#características)
-- [Requisitos Técnicos](#requisitos-técnicos)
-- [Configuración del Proyecto](#configuración-del-proyecto)
-- [Guía de Usuario](#guía-de-usuario)
-- [Guía para Vendedores](#guía-para-vendedores)
+## Uso dependiendo el usuario
+  - Hemos agregado al registro un campo para selecionar el tipo de usuario, si el usuario es de tipo (USER O USUARIO)
+   podra agregar el producto al carrito y hacer la compra de lo contrario si es de tipo (SELLER O VENTA) este no podar agregar 
+   producto al carrito ya que este es el creador del producto y es quien maneja el CRUD.
+
 
 ## Características
 

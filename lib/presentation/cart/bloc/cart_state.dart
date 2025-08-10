@@ -22,7 +22,8 @@ final class CartLoaded extends CartState {
   }
 
   @override
-  List<Object> get props => [items, total];
+  @override
+List<Object> get props => [items.length, total]; // Solo compara longitud y total
 }
 
 final class CartError extends CartState {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:store/presentation/cart/bloc/cart_bloc.dart';
 import 'package:store/theme/app_colors.dart';
 import '../../models/models.dart';
 
@@ -175,7 +177,28 @@ class ProductDetailScreen extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  try {
+                    final cartBloc = BlocProvider.of<CartBloc>(context);
+                    cartBloc.add(AddToCartEvent(product: product, quantity: 1));
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${product.name} agregado al carrito'),
+                        backgroundColor: AppColors.secondary,
+                        duration: const Duration(seconds: 1),
+                      ),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(e.toString()),
+                        backgroundColor: Colors.red,
+                        duration: const Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                },
               ),
             ),
             Container(

@@ -23,7 +23,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   String? _userType; // Almacenaremos solo el userType
-  bool _isLoadingUser = true;
+  // bool _isLoadingUser = true;
   @override
   void initState() {
     super.initState();
@@ -48,13 +48,13 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
           setState(() {
             _userType =
                 doc.get('userType') as String?; // Extraemos solo userType
-            _isLoadingUser = false;
+            // _isLoadingUser = false;
           });
         }
       }
     } catch (e) {
       print('Error loading user data: $e');
-      setState(() => _isLoadingUser = false);
+      // setState(() => _isLoadingUser = false);
     }
   }
 
@@ -106,7 +106,7 @@ class _ProductCatalogScreenState extends State<ProductCatalogScreen>
                   final itemCount = state is CartLoaded
                       ? state.items.fold(
                           0,
-                          (sum, item) => sum + (item.quantity ?? 1),
+                          (sum, item) => sum + (item.quantity),
                         )
                       : 0;
 

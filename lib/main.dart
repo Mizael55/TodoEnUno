@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:store/firebase_options.dart';
 import 'package:store/presentation/auth/bloc/auth_bloc.dart';
 import 'package:store/presentation/auth/bloc/repository/auth_repository.dart';
 import 'package:store/presentation/cart/bloc/cart_bloc.dart';
@@ -14,7 +13,7 @@ import 'widgets/widgets.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp();
 
   runApp(const MyApp());
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +37,7 @@ class CartScreen extends StatelessWidget {
             }
 
             final cartItems = state is CartLoaded
-                ? state.items as List<CartItem>
+                ? state.items
                 : [];
 
             return Column(
@@ -162,7 +164,7 @@ class CartScreen extends StatelessWidget {
   Widget _buildCartItem(BuildContext context, CartItem cartItem) {
     // Asumiendo que cada producto en el carrito tiene una propiedad quantity
     // Si no la tiene, necesitarías modificar tu modelo Product o usar un modelo CartItem
-    final quantity = cartItem.quantity ?? 1;
+    final quantity = cartItem.quantity;
 
     return Container(
       decoration: BoxDecoration(
@@ -430,7 +432,7 @@ class CartScreen extends StatelessWidget {
 
   double _calculateSubtotal(List<CartItem> cartItems) {
     return cartItems.fold(0.0, (total, item) {
-      return total + (item.product.price * (item.quantity ?? 1));
+      return total + (item.product.price * (item.quantity));
     });
   }
 }

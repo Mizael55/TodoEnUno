@@ -1,6 +1,8 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:store/theme/app_colors.dart';
-import 'auth.dart'; // Asegúrate de importar correctamente
+import 'auth.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -10,33 +12,30 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Imagen de fondo ajustada correctamente
+          // Fondo de pantalla completo
           Padding(
-            padding:  EdgeInsets.only(top:1),
+            padding: const EdgeInsets.all(8.0),
             child: Positioned.fill(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.asset(
-                  'assets/logo.png',
-                  fit: BoxFit.cover,
-                  alignment: Alignment.center,
-                ),
+              child: Image.asset(
+                'assets/logo.png',
+                fit: BoxFit.cover,
               ),
             ),
           ),
 
-          // Overlay degradado mejorado
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.transparent,
-                  // ignore: deprecated_member_use
-                  Colors.black.withOpacity(0.5),
-                ],
-                stops: const [0.4, 1.0],
+          // Overlay degradado
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.7),
+                  ],
+                  stops: const [0.4, 1.0],
+                ),
               ),
             ),
           ),
@@ -56,10 +55,16 @@ class WelcomeScreen extends StatelessWidget {
                       Text(
                         'TODO EN UNO',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white, // Cambiado a blanco para mejor contraste
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.2,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 10,
+                              color: Colors.black.withOpacity(0.5),
+                            )
+                          ],
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -67,9 +72,15 @@ class WelcomeScreen extends StatelessWidget {
                         'Encuentra los mejores productos\nal mejor precio',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white, // Cambiado a blanco
                           fontSize: 16,
                           height: 1.4,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 5,
+                              color: Colors.black.withOpacity(0.5),
+                            )
+                          ],
                         ),
                       ),
                     ],
@@ -123,6 +134,7 @@ class WelcomeScreen extends StatelessWidget {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
+                            backgroundColor: Colors.black.withOpacity(0.3),
                           ),
                           child: const Text(
                             'REGISTRARSE',

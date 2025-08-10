@@ -17,13 +17,11 @@ samples, guidance on mobile development, and a full API reference.
 
 # TodoEnUno - Aplicación de E-commerce Flutter
 
-[![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](https://flutter.dev)
-[![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)](https://firebase.google.com)
-[![BLoC](https://img.shields.io/badge/BLoC-5C2D91?style=for-the-badge&logo=bloc&logoColor=white)](https://bloclibrary.dev)
 
 Aplicación de e-commerce desarrollada en Flutter con Firebase que permite a los usuarios explorar productos, gestionar un carrito de compras y realizar pedidos, con funcionalidades diferenciadas para usuarios y vendedores.
 
-![Pantalla de inicio](assets/screenshots/Screenshot_1754861983.png) ![Pantalla de login](assets/screenshots/Screenshot_1754861987.png)
+![Pantalla de inicio](assets/screenshots/Screenshot_1754861993.png) ![Pantalla de Login](assets/screenshots/Screenshot_1754861987.png)
+![Pantalla de Registro](assets/screenshots/Screenshot_1754861990.png) ![Pantalla de Catalogo](assets/screenshots/Screenshot_1754862180.png) ![Pantalla de detalles](assets/screenshots/Screenshot_1754862660.png) 
 
 ## Tabla de Contenidos
 - [Características](#características)
@@ -54,4 +52,14 @@ Aplicación de e-commerce desarrollada en Flutter con Firebase que permite a los
 
 ## Configuración del Proyecto
 
-Sigue estos pasos para configurar el proyecto localmente:
+Sigue estos pasos para configurar el proyecto:
+
+- Clone el proyecto : https://github.com/Mizael55/TodoEnUno.git
+- Corre: flutter pubget, obtener todos los paqutestes
+- Versiones de firebase compatibles para el proyecto: 
+  firebase_core: ^4.0.0
+  firebase_auth: ^6.0.0
+  cloud_firestore: ^6.0.0
+  firebase_storage: ^13.0.0
+  google_sign_in: ^6.2.1
+

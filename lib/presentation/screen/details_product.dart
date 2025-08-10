@@ -7,8 +7,13 @@ import '../../models/models.dart';
 
 class ProductDetailScreen extends StatelessWidget {
   final Product product;
+  final String? userType;
 
-  const ProductDetailScreen({super.key, required this.product});
+  const ProductDetailScreen({
+    super.key, 
+    required this.product, 
+     this.userType = 'seller',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,24 +25,40 @@ class ProductDetailScreen extends StatelessWidget {
             expandedHeight: 350,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
-              background: CachedNetworkImage(
-                imageUrl: product.imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  color: Colors.grey[200],
-                  child: Center(child: CircularProgressIndicator()),
+              background: Hero(
+                tag: 'product-${product.id}',
+                child: CachedNetworkImage(
+                  imageUrl: product.imageUrl,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => Container(
+                    color: Colors.grey[200],
+                    child: const Center(child: CircularProgressIndicator()),
+                  ),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
-                errorWidget: (context, url, error) => Icon(Icons.error),
               ),
             ),
             leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black, size: 35),
+              icon: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.arrow_back, color: Colors.white, size: 24),
+              ),
               onPressed: () => Navigator.of(context).pop(),
             ),
             actions: [
               IconButton(
-                icon: const Icon(Icons.favorite_border, size: 35),
-                color: AppColors.textPrimary,
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.favorite_border, size: 24, color: Colors.white),
+                ),
                 onPressed: () {},
               ),
             ],
@@ -48,73 +69,73 @@ class ProductDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Título y precio
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      //cuando el nombre del producto es muy largo, se sale de la pantalla
                       Expanded(
                         child: Text(
                           product.name,
                           style: const TextStyle(
-                            fontSize: 28,
+                            fontSize: 24,
                             fontWeight: FontWeight.bold,
                             color: AppColors.textPrimary,
                           ),
-                          maxLines: 1,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      const SizedBox(width: 16),
                       Text(
                         '\$${product.price.toStringAsFixed(2)}',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: AppColors.secondary,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
 
-                  // Categoría y rating
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            // ignore: deprecated_member_use
-                            color: AppColors.secondary.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            product.category,
-                            style: TextStyle(
-                              color: AppColors.secondary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                  const SizedBox(height: 16),
+
+                  // Categoría
+                  if (product.category.isNotEmpty)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          product.category,
+                          style: TextStyle(
+                            color: AppColors.secondary,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                        const Spacer(),
-                        const Icon(Icons.star, color: Colors.amber, size: 20),
-                        const SizedBox(width: 4),
-                        const Text(
-                          '4.8',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+
+                  const SizedBox(height: 24),
 
                   // Descripción
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Text(
+                  if (product.description.isNotEmpty) ...[
+                    const Text(
+                      'Descripción',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
                       product.description,
                       style: TextStyle(
                         fontSize: 16,
@@ -122,24 +143,27 @@ class ProductDetailScreen extends StatelessWidget {
                         color: AppColors.textSecondary,
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 24),
+                  ],
 
-                  // Especificaciones
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 8),
-                    child: Text(
-                      'Especificaciones',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                  // Fecha de creación (si es relevante)
+                  if (product.createdAt != null)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Agregado el ${_formatDate(product.createdAt)}',
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  _buildSpecItem('Material', 'Algodón 100%'),
-                  _buildSpecItem('Dimensiones', '40 x 30 x 15 cm'),
-                  _buildSpecItem('Peso', '0.5 kg'),
-
-                  const SizedBox(height: 40),
                 ],
               ),
             ),
@@ -147,94 +171,75 @@ class ProductDetailScreen extends StatelessWidget {
         ],
       ),
 
-      // Botón flotante de compra
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-        height: 60,
-        margin: const EdgeInsets.symmetric(horizontal: 20),
-        decoration: BoxDecoration(
-          color: AppColors.secondary,
-          borderRadius: BorderRadius.circular(15),
-          boxShadow: [
-            BoxShadow(
-              // ignore: deprecated_member_use
-              color: AppColors.secondary.withOpacity(0.3),
-              blurRadius: 10,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              child: TextButton.icon(
-                icon: const Icon(Icons.shopping_cart, color: Colors.white),
-                label: const Text(
-                  'Añadir al carrito',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+      // Mostrar botón solo si no es seller
+      bottomNavigationBar: userType != 'seller' 
+          ? SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                child: SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.secondary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 3,
+                    ),
+                    onPressed: () {
+                      try {
+                        final cartBloc = BlocProvider.of<CartBloc>(context);
+                        cartBloc.add(AddToCartEvent(product: product, quantity: 1));
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('${product.name} agregado al carrito'),
+                            backgroundColor: AppColors.secondary,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            duration: const Duration(seconds: 1),
+                          ),
+                        );
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error: ${e.toString()}'),
+                            backgroundColor: Colors.red,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.shopping_cart, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text(
+                          'Añadir al carrito',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                onPressed: () {
-                  try {
-                    final cartBloc = BlocProvider.of<CartBloc>(context);
-                    cartBloc.add(AddToCartEvent(product: product, quantity: 1));
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('${product.name} agregado al carrito'),
-                        backgroundColor: AppColors.secondary,
-                        duration: const Duration(seconds: 1),
-                      ),
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(e.toString()),
-                        backgroundColor: Colors.red,
-                        duration: const Duration(seconds: 2),
-                      ),
-                    );
-                  }
-                },
               ),
-            ),
-            Container(
-              width: 1,
-              height: 30,
-              // ignore: deprecated_member_use
-              color: Colors.white.withOpacity(0.3),
-            ),
-            SizedBox(
-              width: 60,
-              child: IconButton(
-                icon: const Icon(Icons.favorite_border, color: Colors.white),
-                onPressed: () {},
-              ),
-            ),
-          ],
-        ),
-      ),
+            )
+          : null, // Si es seller, no mostrar bottomNavigationBar
     );
   }
 
-  Widget _buildSpecItem(String title, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Text(
-            '$title: ',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
-            ),
-          ),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
-        ],
-      ),
-    );
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
   }
 }

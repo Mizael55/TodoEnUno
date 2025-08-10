@@ -57,7 +57,7 @@ class ProductCard extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  ProductDetailScreen(product: product),
+                                  ProductDetailScreen(product: product, userType: userType),
                             ),
                           );
                         },

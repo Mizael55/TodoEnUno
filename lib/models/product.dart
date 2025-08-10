@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Product {
   final String? id;
   final String name;
@@ -40,8 +42,8 @@ class Product {
       'price': price,
       'description': description,
       'category': category,
-      'imageUrl': imageUrl, 
-      'createdAt': createdAt.toIso8601String(),
+      'imageUrl': imageUrl,
+      'createdAt': createdAt, // Enviamos DateTime directamente (Firestore lo convertirá a Timestamp)
     };
   }
 
@@ -53,7 +55,9 @@ class Product {
       description: map['description'] ?? '',
       category: map['category'] ?? '',
       imageUrl: map['imageUrl'] ?? '',
-      createdAt: DateTime.parse(map['createdAt']),
+      createdAt: map['createdAt'] is Timestamp 
+          ? (map['createdAt'] as Timestamp).toDate() 
+          : DateTime.parse(map['createdAt']),
     );
   }
 }
